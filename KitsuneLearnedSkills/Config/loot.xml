@@ -1,0 +1,56 @@
+﻿<configs>
+
+	<!--
+		=====================================================================
+		 KitsuneLearnedSkills - remove crafting-skill magazines
+		=====================================================================
+
+		All 23 crafting skills have a learn-by-doing source now:
+		  XML (Config/buffs.xml)         learn by using   - 16 skills
+		  DLL (KitsuneLearnedSkills.dll) learn by crafting - all 23, read from
+		                                 each craftable's UnlockedBy property
+
+		ARMOR IS THE DELIBERATE EXCEPTION: armorSkillMagazine is KEPT, so armor
+		has both paths (find magazines AND learn by crafting).
+
+		Why: craftable armor does not carry UnlockedBy directly. It inherits it
+		through Extends:
+		    armorPrimitiveHelmet -> armorPrimitiveMaster [UnlockedBy=craftingArmor]
+		The game merges Extends properties at load, so the DLL should see it at
+		runtime, but that cannot be proven by reading the XML. Keeping the
+		magazine means armor cannot be stranded even if that assumption is
+		wrong. Once armor is confirmed to level by crafting, delete the
+		not(@name='armorSkillMagazine') clause below and add its 10 groups back
+		to the filler list.
+
+		Seeds and traps needed the DLL's block fallback: they exist only as
+		BLOCKS (plantedCotton1, dartTrap, autoTurret) and carry UnlockedBy on
+		the block rather than the item. Both are craftable, so both are covered.
+
+		Perk books live in their own groups and are never touched.
+		KitsuneSharedReading shares them across the party.
+
+		History: 0.2.0 emptied one group (23 of 218 entries). 0.3.0 swept all
+		218 but stranded 7 skills. 0.4.0 scoped to the 16 the XML covered.
+		0.5.0 added the 5 the DLL covered. 0.6.0 covers everything except the
+		deliberate armor holdout: 211 of 218 removed.
+	-->
+
+	<remove xpath="//lootgroup/item[contains(@name,'SkillMagazine') and not(@name='armorSkillMagazine')]"/>
+
+	<!--
+		These 10 groups held nothing but removed magazines and would be left
+		empty. Some are force-picked by their containers, so pay out dukes.
+	-->
+	<append xpath="//lootgroup[@name='weaponSkillMagazinesOnly']"><item name="casinoCoin" count="5,25"/></append>
+	<append xpath="//lootgroup[@name='groupWorkingStiffsMagazines']"><item name="casinoCoin" count="5,25"/></append>
+	<append xpath="//lootgroup[@name='groupQuestT1SkillMagazineBundle']"><item name="casinoCoin" count="25,75"/></append>
+	<append xpath="//lootgroup[@name='groupBuriedSuppliesT1_03']"><item name="casinoCoin" count="5,25"/></append>
+	<append xpath="//lootgroup[@name='groupMoPower02']"><item name="casinoCoin" count="5,25"/></append>
+	<append xpath="//lootgroup[@name='groupPassNGasMagazines']"><item name="casinoCoin" count="5,25"/></append>
+	<append xpath="//lootgroup[@name='groupZpackNurse02']"><item name="casinoCoin" count="5,25"/></append>
+	<append xpath="//lootgroup[@name='groupShotgunMessiahCrateMagazines']"><item name="casinoCoin" count="5,25"/></append>
+	<append xpath="//lootgroup[@name='groupShamwayMagazines']"><item name="casinoCoin" count="5,25"/></append>
+	<append xpath="//lootgroup[@name='groupPopNPillsMagazines']"><item name="casinoCoin" count="5,25"/></append>
+
+</configs>

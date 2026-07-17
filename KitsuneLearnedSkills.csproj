@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>KitsuneLearnedSkills</AssemblyName>
+    <RootNamespace>KitsuneLearnedSkills</RootNamespace>
+    <Optimize>true</Optimize>
+    <Platforms>x64</Platforms>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <!-- Output the DLL into the deployable payload folder -->
+    <OutputPath>KitsuneLearnedSkills\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 7DTD binaries are reused from the sister KitsunePaintUnlocked project
+         instead of duplicating. Build will need that repo cloned alongside. -->
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="LogLibrary">
+      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\LogLibrary.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

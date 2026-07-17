@@ -1,0 +1,21 @@
+<configs>
+
+	<!--
+		KitsuneLearnedSkills - attach our two hidden permanent buffs to the player.
+
+		buffKLSPace   seeds the pace CVars ($kls_pace_weapon / $kls_pace_tool)
+		buffKLSLearn  the learn-by-doing triggers
+
+		Vanilla keeps its own always-on player buffs (buffStatusCheck01/02) on
+		playerMale, so we add ours to the same list. playerFemale carries no
+		Buffs list of its own in vanilla, which is why only playerMale needs
+		patching.
+
+		Uses <csv op="Add"> rather than <set> so we append to the Buffs list
+		instead of overwriting it, keeping us compatible with any other mod
+		that adds a player buff.
+	-->
+
+	<csv xpath="/entity_classes/entity_class[@name='playerMale']/property[@name='Buffs']/@value" op="Add">buffKLSPace,buffKLSLearn</csv>
+
+</configs>

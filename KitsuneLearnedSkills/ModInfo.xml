@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+	<Name value="KitsuneLearnedSkills"/>
+	<DisplayName value="Kitsune Learned Skills"/>
+	<Version value="0.6.1"/>
+	<Description value="Replaces the crafting-skill magazine grind with learn-by-doing. Crafting skills level up by using tools and weapons and by crafting, not by reading. Perk books (Fireman's Almanac etc.) are untouched."/>
+	<Author value="Ada"/>
+	<Website value=""/>
+</xml>
+
+
+
+

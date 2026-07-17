@@ -1,0 +1,12 @@
+﻿<configs>
+
+	<!--
+		KitsuneLearnedSkills - traders stop stocking crafting magazines.
+		armorSkillMagazine is kept on sale to match Config/loot.xml, since
+		armor deliberately keeps both progression paths. Perk-book stock is
+		untouched. Trader groups are not force-picked, so no filler is needed.
+	-->
+
+	<remove xpath="//trader_item_group/item[contains(@name,'SkillMagazine') and not(@name='armorSkillMagazine')]"/>
+
+</configs>
