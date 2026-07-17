@@ -34,6 +34,16 @@
 		218 but stranded 7 skills. 0.4.0 scoped to the 16 the XML covered.
 		0.5.0 added the 5 the DLL covered. 0.6.0 covers everything except the
 		deliberate armor holdout: 211 of 218 removed.
+
+		0.7.0 postscript: 0.6.0's "all 23 have a source" claim was wrong for
+		five lines (Workstations, Vehicles, Seeds, Electrician, Traps) — their
+		learn-by-crafting source existed but sat entirely ABOVE the first
+		unlock level (forge at Workstations 4, dart trap at Traps 25, ...), so
+		with magazines gone those skills were stranded at level 1. 0.7.0's DLL
+		closes the gap with doing-hooks that work from level 1: workstation
+		queue completions (campfire counts), vehicle repairs, wire-tool
+		connections, and always-unlocked gateway crafts (spikes/barbed fence
+		for Traps, farm plots for Seeds). Magazines stay removed.
 	-->
 
 	<remove xpath="//lootgroup/item[contains(@name,'SkillMagazine') and not(@name='armorSkillMagazine')]"/>

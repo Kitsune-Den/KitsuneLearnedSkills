@@ -70,6 +70,12 @@
 				$kls_pace_weapon  kills while holding that weapon type
 				$kls_pace_tool    block hits / repairs with that tool type
 				$kls_pace_use     consumables used (food, medical)
+				$kls_pace_craft   items crafted (DLL, per UnlockedBy skill)
+				$kls_pace_station workstation queue completions (DLL, feeds
+				                  craftingWorkstations; campfires count, so
+				                  cooking is the road to the forge)
+				$kls_pace_vehicle vehicle repairs (DLL, feeds craftingVehicles)
+				$kls_pace_wire    wire connections (DLL, feeds craftingElectrician)
 
 			Re-applied on every world entry, so a change takes effect on your
 			next login, even on an existing character.
@@ -94,6 +100,12 @@
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_craft" operation="set" value="8"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_use"    operation="set" value="8"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_craft" operation="set" value="8"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_station" operation="set" value="16"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_station" operation="set" value="16"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="4"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="4"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="4"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="4"/>
 			</effect_group>
 			==================== end SLOW ==================== -->
 
@@ -107,6 +119,12 @@
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_craft" operation="set" value="6"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_use"    operation="set" value="6"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_craft" operation="set" value="6"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_station" operation="set" value="8"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_station" operation="set" value="8"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="2"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="2"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="2"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="2"/>
 			</effect_group>
 			<!-- ==================== end MEDIUM ==================== -->
 
@@ -122,6 +140,12 @@
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_craft" operation="set" value="2"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_use"    operation="set" value="2"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_craft" operation="set" value="2"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_station" operation="set" value="4"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_station" operation="set" value="4"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="1"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="1"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="1"/>
 			</effect_group>
 			==================== end FAST ==================== -->
 
@@ -148,12 +172,16 @@
 			                         learn-by-using). The "craft" half needs the
 			                         Phase 2 DLL.
 
-			NOT YET COVERED (no clean held-item trigger; needs Phase 2 DLL):
-			  craftingArmor, craftingRobotics, craftingVehicles,
-			  craftingWorkstations, craftingElectrician, craftingSeeds,
-			  craftingTraps.
-			  Their magazines are deliberately left in loot until then, so
-			  those skills still have a progression path. See Config/loot.xml.
+			NOT COVERED HERE (handled by the DLL instead — see
+			KLS_CraftLearning.cs):
+			  craftingArmor, craftingRobotics    learn by crafting (UnlockedBy)
+			  craftingWorkstations               workstation queue completions
+			  craftingVehicles                   vehicle repairs
+			  craftingElectrician                wire-tool connections
+			  craftingTraps                      spikes/barbed-fence gateway crafts
+			  craftingSeeds                      farm-plot gateway crafts
+			  Armor additionally keeps its magazines as a safety net — see
+			  Config/loot.xml.
 		-->
 		<buff name="buffKLSLearn" hidden="true" remove_on_death="false">
 			<stack_type value="ignore"/>
