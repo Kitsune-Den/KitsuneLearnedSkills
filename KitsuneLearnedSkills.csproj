@@ -12,33 +12,38 @@
     <!-- Output the DLL into the deployable payload folder -->
     <OutputPath>KitsuneLearnedSkills\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- 3.3 CLIENT install. The client assembly is the superset: the dedicated
+         server build strips UI. Build against the game version you ship for:
+         3.3 turned fields like ItemStack.itemValue into properties, and a DLL
+         compiled against an older assembly fails at runtime with
+         MissingFieldException. Override with -p:GameDir=... for another install. -->
+    <GameDir Condition="'$(GameDir)' == ''">G:\SteamLibrary\steamapps\common\7 Days To Die</GameDir>
+    <ManagedDir>$(GameDir)\7DaysToDie_Data\Managed</ManagedDir>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- 7DTD binaries are reused from the sister KitsunePaintUnlocked project
-         instead of duplicating. Build will need that repo cloned alongside. -->
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>$(ManagedDir)\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\UnityEngine.dll</HintPath>
+      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="0Harmony">
-      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\0Harmony.dll</HintPath>
+      <HintPath>$(GameDir)\Mods\0_TFP_Harmony\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="LogLibrary">
-      <HintPath>..\KitsunePaintUnlocked\7dtd-binaries\LogLibrary.dll</HintPath>
+      <HintPath>$(ManagedDir)\LogLibrary.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
