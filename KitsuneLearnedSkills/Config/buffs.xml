@@ -80,7 +80,8 @@
 			Re-applied on every world entry, so a change takes effect on your
 			next login, even on an existing character.
 
-			TO SWITCH: uncomment exactly ONE preset. MEDIUM is on by default.
+			TO SWITCH: uncomment exactly ONE preset. SLOW is on (since 0.7.1,
+			was MEDIUM through 0.7.0).
 
 			(Editors: XML comments cannot contain a double dash, so dividers
 			 here use equals signs. Keep it that way.)
@@ -89,8 +90,7 @@
 			<stack_type value="ignore"/>
 
 			<!-- ==================== SLOW ====================
-			     Roughly double the vanilla grind.
-
+			     Roughly double the vanilla grind. -->
 			<effect_group>
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_weapon" operation="set" value="16"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_weapon" operation="set" value="16"/>
@@ -107,9 +107,10 @@
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="4"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="4"/>
 			</effect_group>
-			==================== end SLOW ==================== -->
+			<!-- ==================== end SLOW ==================== -->
 
-			<!-- ==================== MEDIUM (default) ==================== -->
+			<!-- ==================== MEDIUM ====================
+
 			<effect_group>
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_weapon" operation="set" value="12"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_weapon" operation="set" value="12"/>
@@ -126,7 +127,7 @@
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="2"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="2"/>
 			</effect_group>
-			<!-- ==================== end MEDIUM ==================== -->
+			==================== end MEDIUM ==================== -->
 
 			<!-- ==================== FAST ====================
 			     Half the vanilla grind.
