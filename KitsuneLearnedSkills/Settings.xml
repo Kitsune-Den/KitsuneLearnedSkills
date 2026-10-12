@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+	KitsuneLearnedSkills settings: how fast crafting skills level.
+
+	preset = SLOW, MEDIUM or FAST
+
+	                         SLOW   MEDIUM   FAST
+	  weapon   kills            16      12      4   (kills holding that weapon type)
+	  tool     hits             80      60     20   (block hits / repairs with that tool)
+	  use      uses              8       6      2   (food and medical items consumed)
+	  craft    items             8       6      2   (items crafted, per skill)
+	  station  completions      16       8      4   (any workstation queue, campfire included)
+	  vehicle  repairs           4       2      1   (vehicle repairs with a repair kit)
+	  wire     connections       4       2      1   (wire tool connections)
+
+	Each number is how many of that action earn +1 level. HIGHER = SLOWER.
+	SLOW is roughly double the vanilla magazine grind, FAST roughly half.
+
+	To fine-tune, add any of the names above as an attribute and it
+	overrides the preset for that one source. Example: MEDIUM, but
+	weapons level twice as slowly:
+
+	  <KitsuneLearnedSkills preset="MEDIUM" weapon="24" />
+
+	Multiplayer: only the SERVER's copy of this file counts. It is baked into
+	the config the server sends every player. Restart the server after editing.
+
+	Single player: takes effect the next time you load a world.
+
+	Existing characters pick up the new pace on their next login; progress
+	already earned toward the next level is kept. If this file is missing or
+	unreadable, the mod falls back to SLOW.
+-->
+<KitsuneLearnedSkills preset="SLOW" />

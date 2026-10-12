@@ -41,9 +41,9 @@ using HarmonyLib;
 //        spikes + barbed fence -> craftingTraps   (dart traps unlock at 25)
 //        farm plots            -> craftingSeeds   (first seeds unlock at 2)
 //
-// All pace cvars are seeded by buffKLSPace in Config/buffs.xml (SLOW /
-// MEDIUM / FAST presets); the constants below are only fallbacks in case the
-// buff hasn't applied yet.
+// All pace cvars are seeded by buffKLSPace in Config/buffs.xml, whose numbers
+// come from Settings.xml (see KLS_Settings.cs); the defaults below read the
+// same settings and are only fallbacks in case the buff hasn't applied yet.
 
 public class KitsuneLearnedSkillsInit : IModApi
 {
@@ -53,7 +53,9 @@ public class KitsuneLearnedSkillsInit : IModApi
     {
         if (inited) return;
         inited = true;
-        Log.Out("[KitsuneLearnedSkills] Applying learn-by-doing Harmony patches");
+        KLS_Settings.ModPath = _modInstance.Path;
+        KLS_Settings.Load();
+        Log.Out("[KitsuneLearnedSkills] Applying learn-by-doing Harmony patches (learning pace " + KLS_Settings.Preset + ", set in Settings.xml)");
         new Harmony(GetType().ToString()).PatchAll(Assembly.GetExecutingAssembly());
     }
 }
@@ -166,10 +168,10 @@ public static class KLS_Award
     public const string VehiclePaceVar = "$kls_pace_vehicle";
     public const string WirePaceVar = "$kls_pace_wire";
 
-    public const float CraftDefaultPace = 4f;
-    public const float StationDefaultPace = 8f;
-    public const float VehicleDefaultPace = 2f;
-    public const float WireDefaultPace = 2f;
+    public static float CraftDefaultPace => KLS_Settings.Craft;
+    public static float StationDefaultPace => KLS_Settings.Station;
+    public static float VehicleDefaultPace => KLS_Settings.Vehicle;
+    public static float WireDefaultPace => KLS_Settings.Wire;
 
     private const string CounterPrefix = "$kls_craft_";
 

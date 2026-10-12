@@ -8,7 +8,7 @@
 		Two hidden permanent buffs, attached to the player in
 		Config/entityclasses.xml:
 
-		  buffKLSPace   the pace numbers. EDIT THIS ONE to change difficulty.
+		  buffKLSPace   the pace numbers (set from Settings.xml by the DLL).
 		  buffKLSLearn  the learn-by-doing mechanism.
 
 		=====================================================================
@@ -61,7 +61,7 @@
 
 		<!--
 			=================================================================
-			 PACE CONTROL - the only block you need to edit.
+			 PACE CONTROL - set it in Settings.xml (mod folder root), not here.
 			=================================================================
 
 			Each number = how many "doing" events per +1 crafting level.
@@ -77,11 +77,15 @@
 				$kls_pace_vehicle vehicle repairs (DLL, feeds craftingVehicles)
 				$kls_pace_wire    wire connections (DLL, feeds craftingElectrician)
 
+			Since 0.8.0 the DLL REPLACES the effect group below with the
+			numbers from Settings.xml (preset SLOW / MEDIUM / FAST, plus
+			optional per-source overrides) while the host loads buffs.xml,
+			so a dedicated server's Settings.xml is what every client gets.
+			The group below is only the SLOW fallback for a missing DLL.
+			Editing it does nothing while the DLL is loaded.
+
 			Re-applied on every world entry, so a change takes effect on your
 			next login, even on an existing character.
-
-			TO SWITCH: uncomment exactly ONE preset. SLOW is on (since 0.7.1,
-			was MEDIUM through 0.7.0).
 
 			(Editors: XML comments cannot contain a double dash, so dividers
 			 here use equals signs. Keep it that way.)
@@ -89,8 +93,7 @@
 		<buff name="buffKLSPace" hidden="true" remove_on_death="false">
 			<stack_type value="ignore"/>
 
-			<!-- ==================== SLOW ====================
-			     Roughly double the vanilla grind. -->
+			<!-- SLOW fallback; overwritten from Settings.xml by the DLL. -->
 			<effect_group>
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_weapon" operation="set" value="16"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_weapon" operation="set" value="16"/>
@@ -107,48 +110,6 @@
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="4"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="4"/>
 			</effect_group>
-			<!-- ==================== end SLOW ==================== -->
-
-			<!-- ==================== MEDIUM ====================
-
-			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_weapon" operation="set" value="12"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_weapon" operation="set" value="12"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_tool"   operation="set" value="60"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_tool"   operation="set" value="60"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_use"    operation="set" value="6"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_craft" operation="set" value="6"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_use"    operation="set" value="6"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_craft" operation="set" value="6"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_station" operation="set" value="8"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_station" operation="set" value="8"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="2"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="2"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="2"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="2"/>
-			</effect_group>
-			==================== end MEDIUM ==================== -->
-
-			<!-- ==================== FAST ====================
-			     Half the vanilla grind.
-
-			<effect_group>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_weapon" operation="set" value="4"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_weapon" operation="set" value="4"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_tool"   operation="set" value="20"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_tool"   operation="set" value="20"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_use"    operation="set" value="2"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_craft" operation="set" value="2"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_use"    operation="set" value="2"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_craft" operation="set" value="2"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_station" operation="set" value="4"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_station" operation="set" value="4"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="1"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="1"/>
-				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="1"/>
-				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="1"/>
-			</effect_group>
-			==================== end FAST ==================== -->
 
 		</buff>
 
