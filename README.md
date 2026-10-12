@@ -6,20 +6,47 @@ reading. Perk books (Fireman's Almanac etc.) are untouched.
 
 Built for 7DTD V2.6+. Requires EAC off (ships a DLL).
 
+## Learning speed (Settings.xml)
+
+Pick the pace in `Settings.xml` in the mod folder:
+
+```xml
+<KitsuneLearnedSkills preset="SLOW" />
+```
+
+| Source | SLOW (default) | MEDIUM | FAST |
+|---|---|---|---|
+| `weapon` kills with that weapon type | 16 | 12 | 4 |
+| `tool` block hits / repairs with that tool | 80 | 60 | 20 |
+| `use` food / medical items consumed | 8 | 6 | 2 |
+| `craft` items crafted (per skill) | 8 | 6 | 2 |
+| `station` workstation queue completions | 16 | 8 | 4 |
+| `vehicle` vehicle repairs | 4 | 2 | 1 |
+| `wire` wire connections | 4 | 2 | 1 |
+
+Each number is actions per +1 level (higher = slower). Any source can be
+overridden on top of a preset, e.g. `<KitsuneLearnedSkills preset="MEDIUM"
+weapon="24" />`.
+
+- **Multiplayer:** only the server's `Settings.xml` counts. The DLL bakes it
+  into the `buffs.xml` the server sends to every client, so players can't
+  change their own pace. Restart the server after editing.
+- **Single player:** takes effect the next time you load a world.
+- Existing characters pick up the new pace on their next login.
+
 ## How skills level
 
 Two mechanisms, both always active:
 
 ### Learn by using (Config/buffs.xml)
 
-| Skill group | Levels from | MEDIUM pace (default) |
+| Skill group | Levels from | MEDIUM pace |
 |---|---|---|
 | Weapon crafting (clubs, blades, spears, sledges, knuckles, bows, handguns, shotguns, rifles, machine guns, explosives) | kills while holding that weapon type | 12 kills per level |
 | Tool crafting (harvesting, salvage, repair) | block hits / repairs with that tool type | 60 hits per level |
 | Food + medical crafting | consuming food / medical items | 6 uses per level |
 
-Pace presets (SLOW / MEDIUM / FAST) live in `Config/buffs.xml` — uncomment
-exactly one `buffKLSPace` block.
+Pace is set in `Settings.xml` (see above); MEDIUM numbers shown.
 
 ### Learn by crafting + doing (KitsuneLearnedSkills.dll)
 
@@ -43,9 +70,10 @@ Armor keeps its magazines as an extra path (deliberate safety holdout).
 ## Layout
 
 - `KitsuneLearnedSkills/` — the deployable mod payload (extract into `Mods/`)
-- `KLS_CraftLearning.cs` + `KitsuneLearnedSkills.csproj` — DLL source; builds
-  straight into the payload folder. Needs the sister `KitsunePaintUnlocked`
-  repo cloned alongside for the 7DTD reference binaries.
+- `KitsuneLearnedSkills/Settings.xml` — learning-speed preset and overrides
+- `KLS_CraftLearning.cs`, `KLS_Settings.cs` + `KitsuneLearnedSkills.csproj` —
+  DLL source; builds straight into the payload folder. References the
+  installed 7DTD client's `Managed` folder (override with `-p:GameDir=...`).
 
 ## History note
 
