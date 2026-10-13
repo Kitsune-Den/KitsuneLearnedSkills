@@ -5,15 +5,28 @@
 		 KitsuneLearnedSkills - remove crafting-skill magazines
 		=====================================================================
 
-		All 23 crafting skills have a learn-by-doing source now:
+		All 24 crafting skills have a learn-by-doing source now:
 		  XML (Config/buffs.xml)         learn by using   - 16 skills
-		  DLL (KitsuneLearnedSkills.dll) learn by crafting - all 23, read from
-		                                 each craftable's UnlockedBy property
+		  DLL (KitsuneLearnedSkills.dll) learn by crafting - all 24, read from
+		                                 each craftable's UnlockedBy property,
+		                                 plus doing-hooks for the lines whose
+		                                 first craftable sits above level 1
 
-		ARMOR IS THE DELIBERATE EXCEPTION: armorSkillMagazine is KEPT, so armor
-		has both paths (find magazines AND learn by crafting).
+		TWO DELIBERATE EXCEPTIONS keep their magazines, so they have both
+		paths: armorSkillMagazine and backpackSkillMagazine.
 
-		Why: craftable armor does not carry UnlockedBy directly. It inherits it
+		BACKPACKS (0.9.0): craftingBackpack is a 24th skill the mod originally
+		missed. The sweep below caught its Pack Rat magazine anyway, which
+		stranded it: the first backpack recipe unlocks at level 5, so crafting
+		could never start it. The DLL now levels it from opening fresh loot
+		containers, and the magazine is kept as a safety net until that is
+		proven in play. Once it is, delete the
+		not(@name='backpackSkillMagazine') clauses here and in traders.xml.
+		None of its 7 loot groups go empty from that alone (armor's magazine
+		is the last survivor in 4 of them), so no filler is needed until both
+		holdouts are dropped.
+
+		ARMOR: craftable armor does not carry UnlockedBy directly. It inherits it
 		through Extends:
 		    armorPrimitiveHelmet -> armorPrimitiveMaster [UnlockedBy=craftingArmor]
 		The game merges Extends properties at load, so the DLL should see it at
@@ -46,7 +59,7 @@
 		for Traps, farm plots for Seeds). Magazines stay removed.
 	-->
 
-	<remove xpath="//lootgroup/item[contains(@name,'SkillMagazine') and not(@name='armorSkillMagazine')]"/>
+	<remove xpath="//lootgroup/item[contains(@name,'SkillMagazine') and not(@name='armorSkillMagazine') and not(@name='backpackSkillMagazine')]"/>
 
 	<!--
 		These 10 groups held nothing but removed magazines and would be left

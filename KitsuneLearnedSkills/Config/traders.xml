@@ -2,11 +2,12 @@
 
 	<!--
 		KitsuneLearnedSkills - traders stop stocking crafting magazines.
-		armorSkillMagazine is kept on sale to match Config/loot.xml, since
-		armor deliberately keeps both progression paths. Perk-book stock is
-		untouched. Trader groups are not force-picked, so no filler is needed.
+		armorSkillMagazine and backpackSkillMagazine (Pack Rat) are kept on
+		sale to match Config/loot.xml, since armor and backpacks deliberately
+		keep both progression paths. Perk-book stock is untouched. Trader
+		groups are not force-picked, so no filler is needed.
 	-->
 
-	<remove xpath="//trader_item_group/item[contains(@name,'SkillMagazine') and not(@name='armorSkillMagazine')]"/>
+	<remove xpath="//trader_item_group/item[contains(@name,'SkillMagazine') and not(@name='armorSkillMagazine') and not(@name='backpackSkillMagazine')]"/>
 
 </configs>

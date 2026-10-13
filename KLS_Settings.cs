@@ -29,15 +29,15 @@ public static class KLS_Settings
 
     // Order matches the cvars buffKLSPace seeds; keys are the Settings.xml
     // attribute names.
-    private static readonly string[] Keys = { "weapon", "tool", "use", "craft", "station", "vehicle", "wire" };
+    private static readonly string[] Keys = { "weapon", "tool", "use", "craft", "station", "vehicle", "wire", "loot" };
 
     private static readonly Dictionary<string, float[]> Presets =
         new Dictionary<string, float[]>(StringComparer.OrdinalIgnoreCase)
     {
-        //                       weapon tool use craft station vehicle wire
-        { "SLOW",   new float[] { 16f, 80f, 8f, 8f, 16f, 4f, 4f } },
-        { "MEDIUM", new float[] { 12f, 60f, 6f, 6f,  8f, 2f, 2f } },
-        { "FAST",   new float[] {  4f, 20f, 2f, 2f,  4f, 1f, 1f } },
+        //                       weapon tool use craft station vehicle wire loot
+        { "SLOW",   new float[] { 16f, 80f, 8f, 8f, 16f, 4f, 4f, 30f } },
+        { "MEDIUM", new float[] { 12f, 60f, 6f, 6f,  8f, 2f, 2f, 20f } },
+        { "FAST",   new float[] {  4f, 20f, 2f, 2f,  4f, 1f, 1f,  8f } },
     };
 
     public static string ModPath;
@@ -52,6 +52,7 @@ public static class KLS_Settings
     public static float Station => values[4];
     public static float Vehicle => values[5];
     public static float Wire => values[6];
+    public static float Loot => values[7];
 
     public static void Load()
     {
