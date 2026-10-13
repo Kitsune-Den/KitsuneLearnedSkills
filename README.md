@@ -23,6 +23,7 @@ Pick the pace in `Settings.xml` in the mod folder:
 | `station` workstation queue completions | 16 | 8 | 4 |
 | `vehicle` vehicle repairs | 4 | 2 | 1 |
 | `wire` wire connections | 4 | 2 | 1 |
+| `loot` fresh loot containers opened | 30 | 20 | 8 |
 
 Each number is actions per +1 level (higher = slower). Any source can be
 overridden on top of a preset, e.g. `<KitsuneLearnedSkills preset="MEDIUM"
@@ -54,7 +55,7 @@ Every completed craft reads the crafted item's (or block's) `UnlockedBy`
 property and adds progress to that crafting skill — 6 crafted items = +1
 level on MEDIUM. Both the backpack queue and workstation queues count.
 
-Four skill lines have no craftable below their first unlock, so the DLL
+These skill lines have no craftable below their first unlock, so the DLL
 gives them dedicated "doing" hooks that work from level 1:
 
 | Skill | Levels from | MEDIUM pace | Bootstrap |
@@ -64,8 +65,10 @@ gives them dedicated "doing" hooks that work from level 1:
 | Electrician | completing a wire connection with the wire tool | 2 connections per level | loot/buy a wire tool → own gear unlocks at 25 |
 | Traps | crafting spikes / barbed fence (always unlocked) | 6 crafts per level | dart traps and turrets unlock at 25 |
 | Seeds | crafting farm plots (always unlocked) | 6 crafts per level | seed recipes unlock from 2 |
+| Backpacks | opening a fresh loot container (first open only; your own storage never counts) | 20 containers per level | small backpack unlocks at 5 |
 
-Armor keeps its magazines as an extra path (deliberate safety holdout).
+Armor and Backpacks keep their magazines (Pack Rat for backpacks) as an
+extra path (deliberate safety holdouts).
 
 ## Layout
 
@@ -84,3 +87,8 @@ those five were stranded at level 1 (the forge, first unlock in the
 Workstations line at level 4, was unreachable). 0.6.x also never hooked the
 backpack crafting queue, so backpack crafts taught nothing. Both fixed in
 0.7.0.
+
+0.9.0: the mod was built around 23 crafting skills and missed the 24th,
+Backpacks. The magazine sweep still removed its Pack Rat magazine, and the
+first backpack recipe unlocks at level 5, so Backpacks was stranded. It now
+levels from opening fresh loot containers and keeps its magazine.

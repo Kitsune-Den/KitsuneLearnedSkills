@@ -76,6 +76,8 @@
 				                  cooking is the road to the forge)
 				$kls_pace_vehicle vehicle repairs (DLL, feeds craftingVehicles)
 				$kls_pace_wire    wire connections (DLL, feeds craftingElectrician)
+				$kls_pace_loot    fresh loot containers opened (DLL, feeds
+				                  craftingBackpack)
 
 			Since 0.8.0 the DLL REPLACES the effect group below with the
 			numbers from Settings.xml (preset SLOW / MEDIUM / FAST, plus
@@ -109,6 +111,8 @@
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_vehicle" operation="set" value="4"/>
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="4"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="4"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_loot"    operation="set" value="30"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_loot"    operation="set" value="30"/>
 			</effect_group>
 
 		</buff>
@@ -142,8 +146,9 @@
 			  craftingElectrician                wire-tool connections
 			  craftingTraps                      spikes/barbed-fence gateway crafts
 			  craftingSeeds                      farm-plot gateway crafts
-			  Armor additionally keeps its magazines as a safety net — see
-			  Config/loot.xml.
+			  craftingBackpack                   opening fresh loot containers
+			  Armor and Backpacks additionally keep their magazines as a
+			  safety net — see Config/loot.xml.
 		-->
 		<buff name="buffKLSLearn" hidden="true" remove_on_death="false">
 			<stack_type value="ignore"/>
