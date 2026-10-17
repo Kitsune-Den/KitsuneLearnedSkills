@@ -78,6 +78,8 @@
 				$kls_pace_wire    wire connections (DLL, feeds craftingElectrician)
 				$kls_pace_loot    fresh loot containers opened (DLL, feeds
 				                  craftingBackpack)
+				$kls_pace_wreck   salvage-tool hits on vehicle wrecks (feeds
+				                  craftingVehicles)
 
 			Since 0.8.0 the DLL REPLACES the effect group below with the
 			numbers from Settings.xml (preset SLOW / MEDIUM / FAST, plus
@@ -113,13 +115,15 @@
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wire"    operation="set" value="4"/>
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_loot"    operation="set" value="30"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_loot"    operation="set" value="30"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wreck"   operation="set" value="80"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wreck"   operation="set" value="80"/>
 			</effect_group>
 
 		</buff>
 
 		<!--
 			=================================================================
-			 LEARN BY DOING - 16 skill lines
+			 LEARN BY DOING - 16 skill lines, plus wreck salvage for Vehicles
 			=================================================================
 
 			Pattern per line (order matters, effects fire in document order):
@@ -138,11 +142,17 @@
 			                         learn-by-using). The "craft" half needs the
 			                         Phase 2 DLL.
 
+			  TriggerHasTags         on onSelfDamagedBlock checks the tags of the
+			                         block that was hit (vanilla uses it for
+			                         the church bell). Vehicles uses it to tell
+			                         a car wreck from any other salvage hit.
+
 			NOT COVERED HERE (handled by the DLL instead — see
 			KLS_CraftLearning.cs):
 			  craftingArmor, craftingRobotics    learn by crafting (UnlockedBy)
 			  craftingWorkstations               workstation queue completions
-			  craftingVehicles                   vehicle repairs
+			  craftingVehicles                   vehicle repairs (wreck salvage
+			                                     is here, after salvagingSkill)
 			  craftingElectrician                wire-tool connections
 			  craftingTraps                      spikes/barbed-fence gateway crafts
 			  craftingSeeds                      farm-plot gateway crafts
@@ -396,6 +406,36 @@
 				<triggered_effect trigger="onSelfDamagedBlock" action="ModifyCVar" cvar="$kls_salvage" operation="set" value="0">
 					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
+				</triggered_effect>
+			</effect_group>
+
+			<!--
+				salvagingSkill on a vehicle wreck -> craftingVehicles
+				Vanilla tags every car, truck, bus and forklift wreck with
+				challenge_cars (the "harvest engines from cars" challenges use
+				it). A few deco blocks share the tag (air conditioners, house
+				and car radiators); they count too. The same hit still feeds
+				Salvage Tools through the group above.
+			-->
+			<effect_group>
+				<triggered_effect trigger="onSelfDamagedBlock" action="ModifyCVar" cvar="$kls_wreck" operation="add" value="1">
+					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
+					<requirement name="TriggerHasTags" tags="challenge_cars"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfDamagedBlock" action="AddProgressionLevel" progression_name="craftingVehicles" level="1">
+					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
+					<requirement name="TriggerHasTags" tags="challenge_cars"/>
+					<requirement name="CVarCompare" cvar="$kls_wreck" operation="GTE" value="@$kls_pace_wreck"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfDamagedBlock" action="ShowToolbeltMessage" message="Your vehicle crafting knowledge grows.">
+					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
+					<requirement name="TriggerHasTags" tags="challenge_cars"/>
+					<requirement name="CVarCompare" cvar="$kls_wreck" operation="GTE" value="@$kls_pace_wreck"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfDamagedBlock" action="ModifyCVar" cvar="$kls_wreck" operation="set" value="0">
+					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
+					<requirement name="TriggerHasTags" tags="challenge_cars"/>
+					<requirement name="CVarCompare" cvar="$kls_wreck" operation="GTE" value="@$kls_pace_wreck"/>
 				</triggered_effect>
 			</effect_group>
 
