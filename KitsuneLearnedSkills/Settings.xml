@@ -13,6 +13,7 @@
 	  vehicle  repairs           4       2      1   (vehicle repairs with a repair kit)
 	  wire     connections       4       2      1   (wire tool connections)
 	  loot     containers       30      20      8   (fresh loot containers opened; Backpacks skill)
+	  wreck    hits             80      60     20   (salvage-tool hits on vehicle wrecks; Vehicles skill)
 
 	Each number is how many of that action earn +1 level. HIGHER = SLOWER.
 	SLOW is roughly double the vanilla magazine grind, FAST roughly half.
