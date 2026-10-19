@@ -45,7 +45,7 @@ Two mechanisms, both always active:
 | Skill group | Levels from | MEDIUM pace |
 |---|---|---|
 | Weapon crafting (clubs, blades, spears, sledges, knuckles, bows, handguns, shotguns, rifles, machine guns, explosives) | kills while holding that weapon type | 12 kills per level |
-| Tool crafting (harvesting, salvage, repair) | block hits / repairs with that tool type | 60 hits per level |
+| Tool crafting (harvesting, salvage, repair) | block hits with harvesting and salvage tools; repairs and finished block upgrades with a stone axe, claw hammer or nailgun | 60 per level |
 | Food + medical crafting | consuming food / medical items | 6 uses per level |
 | Vehicles | salvaging a car, truck or bus wreck with a wrench, ratchet or impact driver | 60 hits per level |
 
@@ -100,6 +100,14 @@ tool, so the skill can grow from the scavenging you already do instead of
 only from repair kits. Vanilla tags every car, truck and bus wreck with
 `challenge_cars`, so this is pure XML (`TriggerHasTags` on block hits). Its
 pace is the new `wreck` key in `Settings.xml`. Suggested by Hank on Discord.
+
+0.10.1: three skills that a player reported as stuck. Workstations only
+counted crafts that finished while the station was closed (with the window
+open the game skips the hook 0.10.0 used), and counted a whole closed-window
+batch as one. Repair Tools listened for `repairingSkill`, which vanilla only
+puts on the nailgun, so the claw hammer and stone axe never counted; it now
+also counts block upgrades. Salvage Tools missed the hit that breaks a block,
+which is most of the hits on small salvage. Reported by Havox1023.
 
 ## License
 

@@ -135,9 +135,11 @@
 			Triggers used:
 			  onSelfKilledOther      weapons. Solid, used by vanilla buffs.
 			  onSelfDamagedBlock     harvesting + salvaging. Solid, 7 vanilla uses.
-			  onSelfRepairBlock      repair tools. Documented by TFP but unused
-			                         in vanilla, so UNPROVEN. If repair never
-			                         levels, this trigger is why. Safe failure.
+			  onSelfDestroyedBlock   salvaging: the killing blow fires this
+			                         INSTEAD of onSelfDamagedBlock.
+			  onSelfRepairBlock      repair tools. Fired by ItemActionRepair
+			                         once per repair hit (unused in vanilla XML).
+			  onSelfUpgradedBlock    repair tools, once per finished upgrade.
 			  onSelfPrimaryActionEnd food + medical (the "use" half of
 			                         learn-by-using). The "craft" half needs the
 			                         Phase 2 DLL.
@@ -390,12 +392,25 @@
 				</triggered_effect>
 			</effect_group>
 
-			<!-- salvagingSkill -> craftingSalvageTools -->
+			<!--
+				salvagingSkill -> craftingSalvageTools
+				The killing blow on a block fires onSelfDestroyedBlock INSTEAD
+				of onSelfDamagedBlock (ItemActionAttack.Hit). Most salvage
+				targets (sinks, toilets, cabinets, appliances) break in a few
+				hits, so 0.10.0 lost a big share of salvage work. Count both.
+			-->
 			<effect_group>
 				<triggered_effect trigger="onSelfDamagedBlock" action="ModifyCVar" cvar="$kls_salvage" operation="add" value="1">
 					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
 				</triggered_effect>
+				<triggered_effect trigger="onSelfDestroyedBlock" action="ModifyCVar" cvar="$kls_salvage" operation="add" value="1">
+					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
+				</triggered_effect>
 				<triggered_effect trigger="onSelfDamagedBlock" action="AddProgressionLevel" progression_name="craftingSalvageTools" level="1">
+					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
+					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfDestroyedBlock" action="AddProgressionLevel" progression_name="craftingSalvageTools" level="1">
 					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
@@ -403,7 +418,15 @@
 					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
+				<triggered_effect trigger="onSelfDestroyedBlock" action="ShowToolbeltMessage" message="Your salvage crafting knowledge grows.">
+					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
+					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
+				</triggered_effect>
 				<triggered_effect trigger="onSelfDamagedBlock" action="ModifyCVar" cvar="$kls_salvage" operation="set" value="0">
+					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
+					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfDestroyedBlock" action="ModifyCVar" cvar="$kls_salvage" operation="set" value="0">
 					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
@@ -439,21 +462,45 @@
 				</triggered_effect>
 			</effect_group>
 
-			<!-- repairingSkill -> craftingRepairTools -->
+			<!--
+				repair tools -> craftingRepairTools
+				Vanilla only gives repairingSkill to the NAILGUN (a level 26
+				unlock). The claw hammer is tagged repairingTools and the stone
+				axe only repairTool, so 0.10.0 never counted either and the
+				line was stuck. repairTool is on all three (and is what mod
+				repair tools copy). Upgrading a block (onSelfUpgradedBlock,
+				once per finished upgrade) counts as well as repairing one:
+				upgrading is most of what a hammer ever does.
+			-->
 			<effect_group>
 				<triggered_effect trigger="onSelfRepairBlock" action="ModifyCVar" cvar="$kls_repair" operation="add" value="1">
-					<requirement name="HoldingItemHasTags" tags="repairingSkill"/>
+					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfUpgradedBlock" action="ModifyCVar" cvar="$kls_repair" operation="add" value="1">
+					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
 				</triggered_effect>
 				<triggered_effect trigger="onSelfRepairBlock" action="AddProgressionLevel" progression_name="craftingRepairTools" level="1">
-					<requirement name="HoldingItemHasTags" tags="repairingSkill"/>
+					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
+					<requirement name="CVarCompare" cvar="$kls_repair" operation="GTE" value="@$kls_pace_tool"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfUpgradedBlock" action="AddProgressionLevel" progression_name="craftingRepairTools" level="1">
+					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_repair" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
 				<triggered_effect trigger="onSelfRepairBlock" action="ShowToolbeltMessage" message="Your repair crafting knowledge grows.">
-					<requirement name="HoldingItemHasTags" tags="repairingSkill"/>
+					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
+					<requirement name="CVarCompare" cvar="$kls_repair" operation="GTE" value="@$kls_pace_tool"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfUpgradedBlock" action="ShowToolbeltMessage" message="Your repair crafting knowledge grows.">
+					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_repair" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
 				<triggered_effect trigger="onSelfRepairBlock" action="ModifyCVar" cvar="$kls_repair" operation="set" value="0">
-					<requirement name="HoldingItemHasTags" tags="repairingSkill"/>
+					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
+					<requirement name="CVarCompare" cvar="$kls_repair" operation="GTE" value="@$kls_pace_tool"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfUpgradedBlock" action="ModifyCVar" cvar="$kls_repair" operation="set" value="0">
+					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_repair" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
 			</effect_group>

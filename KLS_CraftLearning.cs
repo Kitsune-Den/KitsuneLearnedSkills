@@ -13,18 +13,22 @@ using HarmonyLib;
 //      crafted item's (or block's) UnlockedBy property and adds progress to
 //      that skill. $kls_pace_craft crafted items = +1 level.
 //      Two entry points, mutually exclusive by vanilla design:
-//        - EntityPlayerLocal.GiveExp(CraftCompleteData): workstation queue
-//          output (TileEntityWorkstation always routes through its
-//          CraftCompleteList, even with the window open).
-//        - XUiC_RecipeStack.giveExp: the backpack crafting queue. 0.6.1
+//        - EntityPlayerLocal.GiveExp(CraftCompleteData): workstation crafts
+//          that finished while the station's window was CLOSED (the tile
+//          entity queues them in CraftCompleteList and hands them over on
+//          the next open).
+//        - XUiC_RecipeStack.giveExp: the backpack crafting queue, AND any
+//          workstation craft that finished while its window was open (the
+//          UI runs the queue then and skips CraftCompleteList). 0.6.1
 //          missed this one entirely — backpack crafts taught nothing.
 //
 //   2. Workstation skill (fixes the forge deadlock): every workstation-queue
-//      completion ALSO credits craftingWorkstations — the GiveExp(
-//      CraftCompleteData) path only ever fires for workstation crafts, so no
-//      area lookup is needed. Campfires count, which is the bootstrap: the
-//      campfire is craftable at level 1, and cooking on it teaches you your
-//      way to the forge (unlocks at 4). $kls_pace_station completions = +1.
+//      completion ALSO credits craftingWorkstations, on both paths above
+//      (the RecipeStack path checks that its window is a workstation's).
+//      Campfires count, which is the bootstrap: the campfire is craftable at
+//      level 1, and cooking on it teaches you your way to the forge (unlocks
+//      at 4). $kls_pace_station completions = +1. 0.10.0 only hooked the
+//      closed-window path, and counted a merged batch there as one.
 //
 //   3. Vehicle skill: XUiM_Vehicle.RepairVehicle (the repair button in the
 //      vehicle UI, client-side, consumes a repair kit) credits
@@ -84,11 +88,14 @@ public class KLS_GiveExpCraftPatch
         {
             if (__instance == null || data == null) return;
             KLS_Award.OnCraftComplete(__instance, data.CraftedItemStack, data.RecipeName);
-            // This path only ever fires for workstation crafts: +1 completion
-            // event (RecipeUsedCount, constructed as 1 per completion) toward
-            // craftingWorkstations regardless of what was crafted.
-            int events = (data.RecipeUsedCount > 0) ? data.RecipeUsedCount : 1;
-            KLS_Award.AwardSkill(__instance, "craftingWorkstations", events,
+            // This path only ever fires for workstation crafts: one completion
+            // event per recipe run toward craftingWorkstations, regardless of
+            // what was crafted. TileEntityWorkstation.AddCraftComplete MERGES
+            // repeat crafts of the same item into one entry (stack count grows,
+            // RecipeUsedCount stays 1), so 0.10.0 counted a whole closed-window
+            // batch of forged iron as a single completion. Recover the run
+            // count from the stack size instead.
+            KLS_Award.AwardSkill(__instance, "craftingWorkstations", KLS_Award.RecipeRuns(data),
                 KLS_Award.StationPaceVar, KLS_Award.StationDefaultPace);
         }
         catch (Exception ex)
@@ -117,6 +124,18 @@ public class KLS_RecipeStackCraftPatch
             ItemValue itemValue = new ItemValue(recipe.itemValueType);
             ItemStack crafted = new ItemStack(itemValue, recipe.count);
             KLS_Award.OnCraftComplete(player, crafted, recipe.GetName());
+
+            // A workstation's queue runs HERE, not through the tile entity,
+            // while its window is open: XUiC_RecipeStack.outputStack calls
+            // giveExp directly for the player who started the craft and never
+            // touches CraftCompleteList. 0.10.0 only credited Workstations on
+            // the GiveExp(CraftCompleteData) path, so anyone who watched their
+            // campfire or forge while it worked never levelled Workstations.
+            if (__instance.windowGroup?.Controller is XUiC_WorkstationWindowGroup)
+            {
+                KLS_Award.AwardSkill(player, "craftingWorkstations", 1,
+                    KLS_Award.StationPaceVar, KLS_Award.StationDefaultPace);
+            }
         }
         catch (Exception ex)
         {
@@ -220,6 +239,27 @@ public static class KLS_Award
         { "barbedFence",               "craftingTraps" },
         { "farmPlotBlockVariantHelper", "craftingSeeds" },
     };
+
+    // How many times the recipe ran for one CraftCompleteData. Merged entries
+    // keep RecipeUsedCount at 1 while the stack grows, so divide the stack by
+    // the recipe's output count and take whichever is larger.
+    public static int RecipeRuns(CraftCompleteData data)
+    {
+        int runs = (data.RecipeUsedCount > 0) ? data.RecipeUsedCount : 1;
+        ItemStack crafted = data.CraftedItemStack;
+        if (crafted == null || crafted.IsEmpty() || string.IsNullOrEmpty(data.RecipeName)) return runs;
+        try
+        {
+            Recipe recipe = CraftingManager.GetRecipe(data.RecipeName);
+            int perRun = (recipe != null && recipe.count > 0) ? recipe.count : 1;
+            int fromStack = crafted.count / perRun;
+            if (fromStack > runs) runs = fromStack;
+        }
+        catch (Exception)
+        {
+        }
+        return runs;
+    }
 
     // Shared craft handler for both queue paths: UnlockedBy award + gateway map.
     public static void OnCraftComplete(EntityPlayerLocal player, ItemStack crafted, string recipeName)
