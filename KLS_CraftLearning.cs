@@ -76,6 +76,20 @@ using HarmonyLib;
 //      items tagged "roboticsSkill" (stun baton, junk sledge, junk turret,
 //      junk drone) credit craftingRobotics. $kls_pace_repair repairs = +1.
 //
+//   9. Exactly one level per XML level-up (0.11.1): buffs.xml levels skills
+//      with vanilla's AddProgressionLevel level="1", and vanilla turns
+//      level="1" on a crafting skill into the world's Magazine Progress
+//      option (PointsPerMagazine), so a world set to 3 gave 3 levels per
+//      threshold. A prefix runs buffKLSLearn's own AddProgressionLevel
+//      actions without that swap. Magazines and every other mod's
+//      AddProgressionLevel still go through vanilla.
+//
+// Each DLL source keeps its own counter per skill ($kls_<source>_<skill>,
+// e.g. $kls_harvest_craftingSeeds), measured against its own pace. Before
+// 0.11.1 they all shared $kls_craft_<skill>, so a skill with two sources at
+// different paces (Seeds: crafting 8, harvesting 24) levelled on whichever
+// pace the last action checked against.
+//
 // All pace cvars are seeded by buffKLSPace in Config/buffs.xml, whose numbers
 // come from Settings.xml (see KLS_Settings.cs); the defaults below read the
 // same settings and are only fallbacks in case the buff hasn't applied yet.
@@ -308,6 +322,76 @@ public class KLS_ItemRepairPatch
     }
 }
 
+// buffKLSLearn's level-ups (see header item 9). Vanilla's Execute swaps
+// level="1" for PointsPerMagazine on crafting skills; for our own actions,
+// add the level the XML asks for instead. Anything else runs vanilla.
+[HarmonyPatch(typeof(MinEventActionAddProgressionLevel))]
+[HarmonyPatch("Execute")]
+public class KLS_LearnLevelPatch
+{
+    public static bool Prefix(MinEventActionAddProgressionLevel __instance)
+    {
+        try
+        {
+            if (!KLS_LearnBuff.Owns(__instance)) return true;
+            List<EntityAlive> targets = __instance.targets;
+            if (targets == null) return false;
+            for (int i = 0; i < targets.Count; i++)
+            {
+                EntityAlive target = targets[i];
+                ProgressionValue value = target?.Progression?.GetProgressionValue(__instance.progressionName);
+                if (value == null) continue;
+                int oldLevel = value.Level;
+                value.Level = Math.Max(0, Math.Min(oldLevel + __instance.level, value.ProgressionClass.MaxLevel));
+                KLS_Award.Announce(target, value, oldLevel, __instance.showMessage);
+            }
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Log.Error("[KitsuneLearnedSkills] learn-by-using level-up failed, falling back to vanilla: " + ex);
+            return true;
+        }
+    }
+}
+
+// The AddProgressionLevel actions that belong to buffKLSLearn, found by
+// reference in the loaded buff. Rebuilt whenever buffs.xml is reloaded (a new
+// world, or joining a server that sends its own buffs.xml).
+public static class KLS_LearnBuff
+{
+    private const string BuffName = "buffKLSLearn";
+
+    private static BuffClass cachedFor;
+    private static readonly HashSet<MinEventActionBase> actions = new HashSet<MinEventActionBase>();
+
+    public static bool Owns(MinEventActionAddProgressionLevel action)
+    {
+        BuffClass buff = BuffManager.Buffs != null ? BuffManager.GetBuff(BuffName) : null;
+        if (buff == null) return false;
+        if (!ReferenceEquals(buff, cachedFor))
+        {
+            actions.Clear();
+            List<MinEffectGroup> groups = buff.Effects?.EffectGroups;
+            if (groups != null)
+            {
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    foreach (List<MinEventActionBase> list in groups[i].TriggeredEffects.Values)
+                    {
+                        for (int j = 0; j < list.Count; j++)
+                        {
+                            if (list[j] is MinEventActionAddProgressionLevel) actions.Add(list[j]);
+                        }
+                    }
+                }
+            }
+            cachedFor = buff;
+        }
+        return actions.Contains(action);
+    }
+}
+
 public static class KLS_Award
 {
     public const string CraftPaceVar = "$kls_pace_craft";
@@ -326,7 +410,7 @@ public static class KLS_Award
     public static float HarvestDefaultPace => KLS_Settings.Harvest;
     public static float RepairDefaultPace => KLS_Settings.Repair;
 
-    private const string CounterPrefix = "$kls_craft_";
+    private const string PacePrefix = "$kls_pace_";
 
     // Always-unlocked recipes whose skill line has no UnlockedBy craftable at
     // level 1 — hard-mapped so the line can bootstrap. Keyed by recipe name.
@@ -421,9 +505,9 @@ public static class KLS_Award
         return null;
     }
 
-    // Add `amount` doing-events to `progressionName`'s counter; every `pace`
-    // events = +1 level. Only ever touches crafting skills (ProgressionClass
-    // Type 6) — attributes, perks and books are never modified.
+    // Add `amount` doing-events to `progressionName`'s counter for this source;
+    // every `pace` events = +1 level. Only ever touches crafting skills
+    // (ProgressionClass Type 6) — attributes, perks and books are never modified.
     public static void AwardSkill(EntityPlayerLocal player, string progressionName, int amount,
         string paceVar, float defaultPace)
     {
@@ -439,25 +523,53 @@ public static class KLS_Award
         float pace = GetPace(player, paceVar, defaultPace);
         if (pace < 1f) pace = 1f;
 
-        string counter = CounterPrefix + progressionName;
+        string counter = CounterVar(paceVar, progressionName);
         float count = player.Buffs.HasCustomVar(counter) ? player.Buffs.GetCustomVar(counter) : 0f;
         count += (amount <= 0) ? 1 : amount;
 
-        int gained = 0;
+        int oldLevel = value.Level;
         while (count >= pace && value.Level < cls.MaxLevel)
         {
             count -= pace;
             value.Level += 1;
-            gained++;
         }
         player.Buffs.SetCustomVar(counter, count, true, (CVarOperation)0);
 
-        if (gained > 0)
+        if (value.Level > oldLevel)
         {
+            Announce(player, value, oldLevel, true);
             string skillName = Localization.Get(cls.NameKey, false, null);
             if (string.IsNullOrEmpty(skillName)) skillName = progressionName;
             GameManager.ShowTooltip(player, "Your " + skillName + " knowledge grows.", false, false, 0f);
         }
+    }
+
+    // $kls_<source>_<skill>, where the source is the pace var's suffix
+    // ($kls_pace_harvest -> $kls_harvest_craftingSeeds). Crafting keeps the
+    // pre-0.11.1 name, $kls_craft_<skill>, so existing craft progress carries on.
+    private static string CounterVar(string paceVar, string progressionName)
+    {
+        string source = paceVar.StartsWith(PacePrefix, StringComparison.Ordinal)
+            ? paceVar.Substring(PacePrefix.Length)
+            : "craft";
+        return "$kls_" + source + "_" + progressionName;
+    }
+
+    // What vanilla's AddProgressionLevel does after changing a level: the
+    // crafting-skill notification and new-recipe messages for the local
+    // player, and the flag that sends progression to the server with the next
+    // stats update (without it, the server kept the old level until something
+    // else changed the player's progression).
+    public static void Announce(EntityAlive target, ProgressionValue value, int oldLevel, bool showMessage)
+    {
+        if (value.Level != oldLevel && value.ProgressionClass.IsCrafting
+            && target is EntityPlayerLocal local && XUiM_Recipes.CraftingProgression)
+        {
+            local.PlayerUI.xui.CollectedItemList.AddCraftingSkillNotification(value);
+            if (showMessage) value.ProgressionClass.HandleCheckCrafting(local, oldLevel, value.Level);
+        }
+        target.Progression.bProgressionStatsChanged = !target.isEntityRemote;
+        target.bPlayerStatsChanged |= !target.isEntityRemote;
     }
 
     private static float GetPace(EntityPlayerLocal player, string paceVar, float defaultPace)
