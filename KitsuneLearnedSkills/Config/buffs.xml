@@ -80,6 +80,9 @@
 				                  craftingBackpack)
 				$kls_pace_wreck   salvage-tool hits on vehicle wrecks (feeds
 				                  craftingVehicles)
+				$kls_pace_harvest crops harvested (DLL, feeds craftingSeeds)
+				$kls_pace_repair  armor / robotics items repaired (DLL, feeds
+				                  craftingArmor / craftingRobotics)
 
 			Since 0.8.0 the DLL REPLACES the effect group below with the
 			numbers from Settings.xml (preset SLOW / MEDIUM / FAST, plus
@@ -117,6 +120,10 @@
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_loot"    operation="set" value="30"/>
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_wreck"   operation="set" value="80"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_wreck"   operation="set" value="80"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_harvest" operation="set" value="24"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_harvest" operation="set" value="24"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_repair"  operation="set" value="8"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_repair"  operation="set" value="8"/>
 			</effect_group>
 
 		</buff>
@@ -151,16 +158,19 @@
 
 			NOT COVERED HERE (handled by the DLL instead — see
 			KLS_CraftLearning.cs):
-			  craftingArmor, craftingRobotics    learn by crafting (UnlockedBy)
+			  craftingArmor, craftingRobotics    learn by crafting (UnlockedBy) and
+			                                     by repairing those items
 			  craftingWorkstations               workstation queue completions
 			  craftingVehicles                   vehicle repairs (wreck salvage
 			                                     is here, after salvagingSkill)
 			  craftingElectrician                wire-tool connections
 			  craftingTraps                      spikes/barbed-fence gateway crafts
-			  craftingSeeds                      farm-plot gateway crafts
+			  craftingRobotics                   also pipe-baton gateway crafts
+			  craftingSeeds                      farm-plot gateway crafts and
+			                                     harvesting crops
 			  craftingBackpack                   opening fresh loot containers
-			  Armor and Backpacks additionally keep their magazines as a
-			  safety net — see Config/loot.xml.
+			  Armor, Backpacks and Robotics additionally keep their
+			  magazines as a safety net — see Config/loot.xml.
 		-->
 		<buff name="buffKLSLearn" hidden="true" remove_on_death="false">
 			<stack_type value="ignore"/>

@@ -44,6 +44,10 @@ using HarmonyLib;
 //      because their line's first UnlockedBy craftable sits above level 1):
 //        spikes + barbed fence -> craftingTraps   (dart traps unlock at 25)
 //        farm plots            -> craftingSeeds   (first seeds unlock at 2)
+//        pipe baton            -> craftingRobotics (0.11.0: the baton is
+//                                 Robotics' level-1 item but carries no
+//                                 UnlockedBy, and the junk sledge, the first
+//                                 item that does, unlocks at 11)
 //
 //   6. Backpack skill (Pack Rat): XUiC_LootWindowGroup.OpenLooting runs on
 //      the looting player's client; _firstTimeTouched is true only for the
@@ -54,6 +58,23 @@ using HarmonyLib;
 //      container (server LootContainerOpened + client lock response).
 //      $kls_pace_loot containers = +1. The Pack Rat magazine is also kept
 //      in loot and traders as a safety net, like armor's.
+//
+//   7. Seeds from harvesting (0.11.0): GameUtils.HarvestOnAttack runs on the
+//      harvesting player's client for every hit that can drop Harvest items
+//      (crops are picked by hitting them; vanilla's farming challenges count
+//      from the same place). One harvest can drop several items (crop, bonus
+//      crop, Farmer-armor seed), so this counts the crop BLOCK instead: once
+//      per "crops"-tagged block with Harvest drops that the hit finishes off.
+//      Farm crops and wild crops both count; dead plants and snowberry bushes
+//      (fibre only, no "crops" tag or no Harvest drops) do not. Farm plots
+//      stay as the gateway craft. $kls_pace_harvest crops = +1.
+//
+//   8. Armor and Robotics from repairing (0.11.0): XUiC_RecipeStack.
+//      outputStack raises QuestEventManager.RepairedItem on the repairing
+//      player's client when a repair in the crafting queue finishes, and
+//      nothing else raises it. Items tagged "armor" credit craftingArmor,
+//      items tagged "roboticsSkill" (stun baton, junk sledge, junk turret,
+//      junk drone) credit craftingRobotics. $kls_pace_repair repairs = +1.
 //
 // All pace cvars are seeded by buffKLSPace in Config/buffs.xml, whose numbers
 // come from Settings.xml (see KLS_Settings.cs); the defaults below read the
@@ -213,6 +234,80 @@ public class KLS_LootOpenPatch
     }
 }
 
+// Crop harvest (see header item 7). The prefix reads the block before vanilla
+// clears attackDetails.blockBeingDamaged at the end; bKilled is left alone, so
+// the postfix can tell the hit that finished the crop from the ones before it.
+[HarmonyPatch(typeof(GameUtils))]
+[HarmonyPatch("HarvestOnAttack")]
+public class KLS_HarvestPatch
+{
+    private static readonly FastTags<TagGroup.Global> CropTag = FastTags<TagGroup.Global>.Parse("crops");
+
+    public static void Prefix(ItemActionData _actionData, out bool __state)
+    {
+        __state = false;
+        try
+        {
+            if (!(_actionData?.invData?.holdingEntity is EntityPlayerLocal)) return;
+            ItemActionAttack.AttackHitInfo details = _actionData.attackDetails;
+            if (details?.itemsToDrop == null || details.blockBeingDamaged.isair) return;
+            if (!details.itemsToDrop.TryGetValue(EnumDropEvent.Harvest, out List<Block.SItemDropProb> drops)
+                || drops == null || drops.Count == 0) return;
+            Block block = details.blockBeingDamaged.Block;
+            __state = block != null && block.HasAnyFastTags(CropTag);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("[KitsuneLearnedSkills] harvest-to-learn check failed: " + ex);
+        }
+    }
+
+    public static void Postfix(ItemActionData _actionData, bool __state)
+    {
+        if (!__state) return;
+        try
+        {
+            if (_actionData.attackDetails == null || !_actionData.attackDetails.bKilled) return;
+            KLS_Award.AwardSkill((EntityPlayerLocal)_actionData.invData.holdingEntity, "craftingSeeds", 1,
+                KLS_Award.HarvestPaceVar, KLS_Award.HarvestDefaultPace);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("[KitsuneLearnedSkills] harvest-to-learn failed: " + ex);
+        }
+    }
+}
+
+// Finished item repair from the crafting queue (see header item 8). Only
+// XUiC_RecipeStack.outputStack raises this, on the repairing player's client.
+[HarmonyPatch(typeof(QuestEventManager))]
+[HarmonyPatch("RepairedItem")]
+public class KLS_ItemRepairPatch
+{
+    private static readonly FastTags<TagGroup.Global> ArmorTag = FastTags<TagGroup.Global>.Parse("armor");
+    private static readonly FastTags<TagGroup.Global> RoboticsTag = FastTags<TagGroup.Global>.Parse("roboticsSkill");
+
+    public static void Postfix(ItemValue newValue)
+    {
+        try
+        {
+            ItemClass itemClass = newValue?.ItemClass;
+            if (itemClass == null) return;
+            string skill = itemClass.HasAnyTags(ArmorTag) ? "craftingArmor"
+                : itemClass.HasAnyTags(RoboticsTag) ? "craftingRobotics"
+                : null;
+            if (skill == null) return;
+            EntityPlayerLocal player = GameManager.Instance?.World?.GetPrimaryPlayer();
+            if (player == null) return;
+            KLS_Award.AwardSkill(player, skill, 1, KLS_Award.RepairPaceVar, KLS_Award.RepairDefaultPace);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("[KitsuneLearnedSkills] repair-to-learn failed: " + ex);
+        }
+    }
+}
+
 public static class KLS_Award
 {
     public const string CraftPaceVar = "$kls_pace_craft";
@@ -220,12 +315,16 @@ public static class KLS_Award
     public const string VehiclePaceVar = "$kls_pace_vehicle";
     public const string WirePaceVar = "$kls_pace_wire";
     public const string LootPaceVar = "$kls_pace_loot";
+    public const string HarvestPaceVar = "$kls_pace_harvest";
+    public const string RepairPaceVar = "$kls_pace_repair";
 
     public static float CraftDefaultPace => KLS_Settings.Craft;
     public static float StationDefaultPace => KLS_Settings.Station;
     public static float VehicleDefaultPace => KLS_Settings.Vehicle;
     public static float WireDefaultPace => KLS_Settings.Wire;
     public static float LootDefaultPace => KLS_Settings.Loot;
+    public static float HarvestDefaultPace => KLS_Settings.Harvest;
+    public static float RepairDefaultPace => KLS_Settings.Repair;
 
     private const string CounterPrefix = "$kls_craft_";
 
@@ -238,6 +337,7 @@ public static class KLS_Award
         { "trapSpikesIronDmg0",        "craftingTraps" },
         { "barbedFence",               "craftingTraps" },
         { "farmPlotBlockVariantHelper", "craftingSeeds" },
+        { "meleeWpnBatonT0PipeBaton",   "craftingRobotics" },
     };
 
     // How many times the recipe ran for one CraftCompleteData. Merged entries
