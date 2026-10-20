@@ -25,6 +25,8 @@ Pick the pace in `Settings.xml` in the mod folder:
 | `wire` wire connections | 4 | 2 | 1 |
 | `loot` fresh loot containers opened | 30 | 20 | 8 |
 | `wreck` salvage-tool hits on vehicle wrecks | 80 | 60 | 20 |
+| `harvest` crops harvested (farm or wild) | 24 | 16 | 6 |
+| `repair` armor / robotics items repaired | 8 | 6 | 2 |
 
 Each number is actions per +1 level (higher = slower). Any source can be
 overridden on top of a preset, e.g. `<KitsuneLearnedSkills preset="MEDIUM"
@@ -66,11 +68,13 @@ gives them dedicated "doing" hooks that work from level 1:
 | Vehicles | repairing a vehicle with a repair kit (wreck salvage counts too, see above) | 2 repairs per level | repair a looted bicycle, or salvage wrecks → parts unlock at 5 |
 | Electrician | completing a wire connection with the wire tool | 2 connections per level | loot/buy a wire tool → own gear unlocks at 25 |
 | Traps | crafting spikes / barbed fence (always unlocked) | 6 crafts per level | dart traps and turrets unlock at 25 |
-| Seeds | crafting farm plots (always unlocked) | 6 crafts per level | seed recipes unlock from 2 |
+| Seeds | crafting farm plots (always unlocked), and harvesting crops (farm or wild) | 6 crafts or 16 crops per level | seed recipes unlock from 2 |
+| Armor | repairing armor (on top of crafting it) | 6 repairs per level | primitive armor is craftable from 1 |
+| Robotics | crafting pipe batons (always unlocked), and repairing a baton, junk sledge, junk turret or junk drone | 6 crafts or repairs per level | junk sledge unlocks at 11 |
 | Backpacks | opening a fresh loot container (first open only; your own storage never counts) | 20 containers per level | small backpack unlocks at 5 |
 
-Armor and Backpacks keep their magazines (Pack Rat for backpacks) as an
-extra path (deliberate safety holdouts).
+Armor, Backpacks and Robotics keep their magazines (Pack Rat for backpacks)
+as an extra path (deliberate safety holdouts).
 
 ## Layout
 
@@ -108,6 +112,17 @@ batch as one. Repair Tools listened for `repairingSkill`, which vanilla only
 puts on the nailgun, so the claw hammer and stone axe never counted; it now
 also counts block upgrades. Salvage Tools missed the hit that breaks a block,
 which is most of the hits on small salvage. Reported by Havox1023.
+
+0.11.0: Seeds also levels from harvesting crops, farm or wild, counted once
+per crop picked (new `harvest` pace key). Before this, the only way up was
+crafting farm plots and then seeds, so a player who farmed a lot learned
+nothing from the harvest itself. Armor and Robotics also level from repairing
+those items (new `repair` pace key), and the Robotics magazine is back in loot
+and traders as a second path, like Armor and Pack Rat. Robotics had been
+stranded at level 1 since 0.6.0: its level-1 item, the pipe baton, carries no
+`UnlockedBy`, so crafting it taught nothing, and the junk sledge (the first
+item that does) unlocks at 11. Crafting a pipe baton now counts as a gateway
+craft, like farm plots for Seeds.
 
 ## License
 

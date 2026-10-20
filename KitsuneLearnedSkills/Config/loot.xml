@@ -12,8 +12,14 @@
 		                                 plus doing-hooks for the lines whose
 		                                 first craftable sits above level 1
 
-		TWO DELIBERATE EXCEPTIONS keep their magazines, so they have both
-		paths: armorSkillMagazine and backpackSkillMagazine.
+		THREE DELIBERATE EXCEPTIONS keep their magazines, so they have both
+		paths: armorSkillMagazine, backpackSkillMagazine and
+		roboticsSkillMagazine.
+
+		ROBOTICS (0.11.0): the robotics line is short (stun baton, junk
+		sledge, junk turret, junk drone) and its items are expensive to
+		craft, so learning by crafting and repairing alone is slow. Its
+		magazine is kept as a second path.
 
 		BACKPACKS (0.9.0): craftingBackpack is a 24th skill the mod originally
 		missed. The sweep below caught its Pack Rat magazine anyway, which
@@ -59,7 +65,7 @@
 		for Traps, farm plots for Seeds). Magazines stay removed.
 	-->
 
-	<remove xpath="//lootgroup/item[contains(@name,'SkillMagazine') and not(@name='armorSkillMagazine') and not(@name='backpackSkillMagazine')]"/>
+	<remove xpath="//lootgroup/item[contains(@name,'SkillMagazine') and not(@name='armorSkillMagazine') and not(@name='backpackSkillMagazine') and not(@name='roboticsSkillMagazine')]"/>
 
 	<!--
 		These 10 groups held nothing but removed magazines and would be left

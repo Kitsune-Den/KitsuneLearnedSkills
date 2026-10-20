@@ -14,6 +14,8 @@
 	  wire     connections       4       2      1   (wire tool connections)
 	  loot     containers       30      20      8   (fresh loot containers opened; Backpacks skill)
 	  wreck    hits             80      60     20   (salvage-tool hits on vehicle wrecks; Vehicles skill)
+	  harvest  crops            24      16      6   (crops harvested, farm or wild; Seeds skill)
+	  repair   repairs           8       6      2   (armor / robotics items repaired; Armor / Robotics skills)
 
 	Each number is how many of that action earn +1 level. HIGHER = SLOWER.
 	SLOW is roughly double the vanilla magazine grind, FAST roughly half.
