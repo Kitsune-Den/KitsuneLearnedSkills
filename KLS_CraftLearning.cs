@@ -328,7 +328,7 @@ public static class KLS_Award
 
     private const string CounterPrefix = "$kls_craft_";
 
-    // Config/Localization.csv; {0} is the game's own localized skill name.
+    // Config/Localization.csv (V3.x) / .txt (V2.x); {0} is the game's own localized skill name.
     private const string MessageKey = "klsMsgSkillGrows";
 
     // Always-unlocked recipes whose skill line has no UnlockedBy craftable at
