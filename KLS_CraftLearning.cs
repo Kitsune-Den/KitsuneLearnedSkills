@@ -328,6 +328,9 @@ public static class KLS_Award
 
     private const string CounterPrefix = "$kls_craft_";
 
+    // Config/Localization.txt; {0} is the game's own localized skill name.
+    private const string MessageKey = "klsMsgSkillGrows";
+
     // Always-unlocked recipes whose skill line has no UnlockedBy craftable at
     // level 1 — hard-mapped so the line can bootstrap. Keyed by recipe name.
     private static readonly Dictionary<string, string> GatewayRecipes =
@@ -456,7 +459,8 @@ public static class KLS_Award
         {
             string skillName = Localization.Get(cls.NameKey, false, null);
             if (string.IsNullOrEmpty(skillName)) skillName = progressionName;
-            GameManager.ShowTooltip(player, "Your " + skillName + " knowledge grows.", false, false, 0f);
+            string format = Localization.Exists(MessageKey) ? Localization.Get(MessageKey, false, null) : "Your {0} knowledge grows.";
+            GameManager.ShowTooltip(player, string.Format(format, skillName), false, false, 0f);
         }
     }
 
