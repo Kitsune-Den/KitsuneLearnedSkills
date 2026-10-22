@@ -80,6 +80,9 @@ as an extra path (deliberate safety holdouts).
 
 - `KitsuneLearnedSkills/` — the deployable mod payload (extract into `Mods/`)
 - `KitsuneLearnedSkills/Settings.xml` — learning-speed preset and overrides
+- `KitsuneLearnedSkills/Config/Localization.csv` + `Localization.txt` —
+  message text in the 12 languages besides English (V3.x reads the `.csv`,
+  V2.x the `.txt`; keep them in sync)
 - `KLS_CraftLearning.cs`, `KLS_Settings.cs` + `KitsuneLearnedSkills.csproj` —
   DLL source; builds straight into the payload folder. References the
   installed 7DTD client's `Managed` folder (override with `-p:GameDir=...`).
@@ -123,6 +126,13 @@ stranded at level 1 since 0.6.0: its level-1 item, the pipe baton, carries no
 `UnlockedBy`, so crafting it taught nothing, and the junk sledge (the first
 item that does) unlocks at 11. Crafting a pipe baton now counts as a gateway
 craft, like farm plots for Seeds.
+
+0.12.0: the "knowledge grows" messages are translated into German, Spanish,
+French, Italian, Japanese, Korean, Polish, Brazilian Portuguese, Russian,
+Turkish, and Simplified and Traditional Chinese (`Config/Localization.csv`
+for V3.x, `Localization.txt` for V2.x). They were hardcoded English before, and
+the crafting one mixed English with the game's translated skill name. A
+dedicated server sends its translations to players along with its configs.
 
 ## License
 

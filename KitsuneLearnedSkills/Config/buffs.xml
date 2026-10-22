@@ -183,7 +183,7 @@
 					<requirement name="HoldingItemHasTags" tags="clubSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_clubs" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your club crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgClubs" message="Your club crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="clubSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_clubs" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -202,7 +202,7 @@
 					<requirement name="HoldingItemHasTags" tags="bladeSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_blades" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your blade crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgBlades" message="Your blade crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="bladeSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_blades" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -221,7 +221,7 @@
 					<requirement name="HoldingItemHasTags" tags="spearSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_spears" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your spear crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgSpears" message="Your spear crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="spearSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_spears" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -240,7 +240,7 @@
 					<requirement name="HoldingItemHasTags" tags="sledgeSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_sledges" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your sledgehammer crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgSledgehammers" message="Your sledgehammer crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="sledgeSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_sledges" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -259,7 +259,7 @@
 					<requirement name="HoldingItemHasTags" tags="knuckleSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_knuckles" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your knuckle crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgKnuckles" message="Your knuckle crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="knuckleSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_knuckles" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -278,7 +278,7 @@
 					<requirement name="HoldingItemHasTags" tags="bowSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_bows" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your archery crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgBows" message="Your archery crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="bowSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_bows" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -297,7 +297,7 @@
 					<requirement name="HoldingItemHasTags" tags="handgunSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_handguns" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your handgun crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgHandguns" message="Your handgun crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="handgunSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_handguns" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -316,7 +316,7 @@
 					<requirement name="HoldingItemHasTags" tags="shotgunSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_shotguns" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your shotgun crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgShotguns" message="Your shotgun crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="shotgunSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_shotguns" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -335,7 +335,7 @@
 					<requirement name="HoldingItemHasTags" tags="rifleSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_rifles" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your rifle crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgRifles" message="Your rifle crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="rifleSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_rifles" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -354,7 +354,7 @@
 					<requirement name="HoldingItemHasTags" tags="machinegunSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_machineguns" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your machine gun crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgMachineGuns" message="Your machine gun crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="machinegunSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_machineguns" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -373,7 +373,7 @@
 					<requirement name="HoldingItemHasTags" tags="explosivesSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_explosives" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message="Your explosives crafting knowledge grows.">
+				<triggered_effect trigger="onSelfKilledOther" action="ShowToolbeltMessage" message_key="klsMsgExplosives" message="Your explosives crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="explosivesSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_explosives" operation="GTE" value="@$kls_pace_weapon"/>
 				</triggered_effect>
@@ -392,7 +392,7 @@
 					<requirement name="HoldingItemHasTags" tags="harvestingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_harvest" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfDamagedBlock" action="ShowToolbeltMessage" message="Your tool crafting knowledge grows.">
+				<triggered_effect trigger="onSelfDamagedBlock" action="ShowToolbeltMessage" message_key="klsMsgHarvestingTools" message="Your tool crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="harvestingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_harvest" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
@@ -424,11 +424,11 @@
 					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfDamagedBlock" action="ShowToolbeltMessage" message="Your salvage crafting knowledge grows.">
+				<triggered_effect trigger="onSelfDamagedBlock" action="ShowToolbeltMessage" message_key="klsMsgSalvageTools" message="Your salvage crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfDestroyedBlock" action="ShowToolbeltMessage" message="Your salvage crafting knowledge grows.">
+				<triggered_effect trigger="onSelfDestroyedBlock" action="ShowToolbeltMessage" message_key="klsMsgSalvageTools" message="Your salvage crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
@@ -460,7 +460,7 @@
 					<requirement name="TriggerHasTags" tags="challenge_cars"/>
 					<requirement name="CVarCompare" cvar="$kls_wreck" operation="GTE" value="@$kls_pace_wreck"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfDamagedBlock" action="ShowToolbeltMessage" message="Your vehicle crafting knowledge grows.">
+				<triggered_effect trigger="onSelfDamagedBlock" action="ShowToolbeltMessage" message_key="klsMsgVehicles" message="Your vehicle crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="salvagingSkill"/>
 					<requirement name="TriggerHasTags" tags="challenge_cars"/>
 					<requirement name="CVarCompare" cvar="$kls_wreck" operation="GTE" value="@$kls_pace_wreck"/>
@@ -497,11 +497,11 @@
 					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_repair" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfRepairBlock" action="ShowToolbeltMessage" message="Your repair crafting knowledge grows.">
+				<triggered_effect trigger="onSelfRepairBlock" action="ShowToolbeltMessage" message_key="klsMsgRepairTools" message="Your repair crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_repair" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfUpgradedBlock" action="ShowToolbeltMessage" message="Your repair crafting knowledge grows.">
+				<triggered_effect trigger="onSelfUpgradedBlock" action="ShowToolbeltMessage" message_key="klsMsgRepairTools" message="Your repair crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="repairTool,repairingTools,repairingSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_repair" operation="GTE" value="@$kls_pace_tool"/>
 				</triggered_effect>
@@ -524,7 +524,7 @@
 					<requirement name="HoldingItemHasTags" tags="foodSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_food" operation="GTE" value="@$kls_pace_use"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfPrimaryActionEnd" action="ShowToolbeltMessage" message="Your cooking crafting knowledge grows.">
+				<triggered_effect trigger="onSelfPrimaryActionEnd" action="ShowToolbeltMessage" message_key="klsMsgFood" message="Your cooking crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="foodSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_food" operation="GTE" value="@$kls_pace_use"/>
 				</triggered_effect>
@@ -543,7 +543,7 @@
 					<requirement name="HoldingItemHasTags" tags="medicalSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_medical" operation="GTE" value="@$kls_pace_use"/>
 				</triggered_effect>
-				<triggered_effect trigger="onSelfPrimaryActionEnd" action="ShowToolbeltMessage" message="Your medical crafting knowledge grows.">
+				<triggered_effect trigger="onSelfPrimaryActionEnd" action="ShowToolbeltMessage" message_key="klsMsgMedical" message="Your medical crafting knowledge grows.">
 					<requirement name="HoldingItemHasTags" tags="medicalSkill"/>
 					<requirement name="CVarCompare" cvar="$kls_medical" operation="GTE" value="@$kls_pace_use"/>
 				</triggered_effect>
