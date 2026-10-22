@@ -80,7 +80,7 @@ as an extra path (deliberate safety holdouts).
 
 - `KitsuneLearnedSkills/` — the deployable mod payload (extract into `Mods/`)
 - `KitsuneLearnedSkills/Settings.xml` — learning-speed preset and overrides
-- `KitsuneLearnedSkills/Config/Localization.txt` — message text in 13
+- `KitsuneLearnedSkills/Config/Localization.csv` — message text in the 12
   languages besides English
 - `KLS_CraftLearning.cs`, `KLS_Settings.cs` + `KitsuneLearnedSkills.csproj` —
   DLL source; builds straight into the payload folder. References the
@@ -126,10 +126,9 @@ stranded at level 1 since 0.6.0: its level-1 item, the pipe baton, carries no
 item that does) unlocks at 11. Crafting a pipe baton now counts as a gateway
 craft, like farm plots for Seeds.
 
-0.12.0: the "knowledge grows" messages are translated into German, Spanish
-(Spain and Latin America), French, Italian, Japanese, Korean, Polish,
-Brazilian Portuguese, Russian, Turkish, and Simplified and Traditional
-Chinese (`Config/Localization.txt`). They were hardcoded English before, and
+0.12.0: the "knowledge grows" messages are translated into German, Spanish,
+French, Italian, Japanese, Korean, Polish, Brazilian Portuguese, Russian,
+Turkish, and Simplified and Traditional Chinese (`Config/Localization.csv`). They were hardcoded English before, and
 the crafting one mixed English with the game's translated skill name. A
 dedicated server sends its translations to players along with its configs.
 
