@@ -79,7 +79,7 @@ using HarmonyLib;
 //      items tagged "roboticsSkill" (stun baton, junk sledge, junk turret,
 //      junk drone) credit craftingRobotics. $kls_pace_repair repairs = +1.
 //
-//   9. Exactly one level per XML level-up (0.12.1): buffs.xml levels skills
+//   9. Exactly one level per XML level-up (0.13.0): buffs.xml levels skills
 //      with vanilla's AddProgressionLevel level="1", and vanilla turns
 //      level="1" on a crafting skill into the world's Magazine Progress
 //      option (PointsPerMagazine), so a world set to 3 gave 3 levels per
@@ -89,7 +89,7 @@ using HarmonyLib;
 //
 // Each DLL source keeps its own counter per skill ($kls_<source>_<skill>,
 // e.g. $kls_harvest_craftingSeeds), measured against its own pace. Before
-// 0.12.1 they all shared $kls_craft_<skill>, so a skill with two sources at
+// 0.13.0 they all shared $kls_craft_<skill>, so a skill with two sources at
 // different paces (Seeds: crafting 8, harvesting 24) levelled on whichever
 // pace the last action checked against.
 //
@@ -419,6 +419,9 @@ public static class KLS_Award
 
     private const string PacePrefix = "$kls_pace_";
 
+    // Config/Localization.csv (V3.x) / .txt (V2.x); {0} is the game's own localized skill name.
+    private const string MessageKey = "klsMsgSkillGrows";
+
     // Always-unlocked recipes whose skill line has no UnlockedBy craftable at
     // level 1 — hard-mapped so the line can bootstrap. Keyed by recipe name.
     private static readonly Dictionary<string, string> GatewayRecipes =
@@ -605,13 +608,14 @@ public static class KLS_Award
             Announce(player, value, oldLevel, true);
             string skillName = Localization.Get(cls.NameKey, false, null);
             if (string.IsNullOrEmpty(skillName)) skillName = progressionName;
-            GameManager.ShowTooltip(player, "Your " + skillName + " knowledge grows.", false, false, 0f);
+            string format = Localization.Exists(MessageKey) ? Localization.Get(MessageKey, false, null) : "Your {0} knowledge grows.";
+            GameManager.ShowTooltip(player, string.Format(format, skillName), false, false, 0f);
         }
     }
 
     // $kls_<source>_<skill>, where the source is the pace var's suffix
     // ($kls_pace_harvest -> $kls_harvest_craftingSeeds). Crafting keeps the
-    // pre-0.12.1 name, $kls_craft_<skill>, so existing craft progress carries on.
+    // pre-0.13.0 name, $kls_craft_<skill>, so existing craft progress carries on.
     private static string CounterVar(string paceVar, string progressionName)
     {
         string source = paceVar.StartsWith(PacePrefix, StringComparison.Ordinal)

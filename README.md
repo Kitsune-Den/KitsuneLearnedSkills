@@ -101,6 +101,9 @@ as an extra path (deliberate safety holdouts).
 
 - `KitsuneLearnedSkills/` — the deployable mod payload (extract into `Mods/`)
 - `KitsuneLearnedSkills/Settings.xml` — learning-speed preset and overrides
+- `KitsuneLearnedSkills/Config/Localization.csv` + `Localization.txt` —
+  message text in the 12 languages besides English (V3.x reads the `.csv`,
+  V2.x the `.txt`; keep them in sync)
 - `KLS_CraftLearning.cs`, `KLS_Settings.cs` + `KitsuneLearnedSkills.csproj` —
   DLL source; builds straight into the payload folder. References the
   installed 7DTD client's `Managed` folder (override with `-p:GameDir=...`).
@@ -154,7 +157,14 @@ counts for its base craft time divided by `stationtime` (15 s), up to
 Cooking is about where it was, so the campfire road to the forge is
 unchanged. Progress already earned is kept.
 
-0.12.1: three fixes. The learn-by-using level-ups (kills, tool hits, eating)
+0.13.0: the "knowledge grows" messages are translated into German, Spanish,
+French, Italian, Japanese, Korean, Polish, Brazilian Portuguese, Russian,
+Turkish, and Simplified and Traditional Chinese (`Config/Localization.csv`
+for V3.x, `Localization.txt` for V2.x). They were hardcoded English before, and
+the crafting one mixed English with the game's translated skill name. A
+dedicated server sends its translations to players along with its configs.
+
+0.13.0 also has three fixes. The learn-by-using level-ups (kills, tool hits, eating)
 use vanilla's add-a-level action, which on crafting skills quietly gives the
 world's Magazine Progress setting instead of 1, so a world set to 3 gave 3
 levels each time. They now give exactly one. Each DLL source also keeps its
