@@ -29,6 +29,9 @@ using HarmonyLib;
 //      level 1, and cooking on it teaches you your way to the forge (unlocks
 //      at 4). $kls_pace_station completions = +1. 0.10.0 only hooked the
 //      closed-window path, and counted a merged batch there as one.
+//      0.12.0: a completion is weighed by the recipe's base craft time, so a
+//      stack of cobblestone no longer teaches as much as a stack of guns
+//      (see KLS_Award.StationWeight).
 //
 //   3. Vehicle skill: XUiM_Vehicle.RepairVehicle (the repair button in the
 //      vehicle UI, client-side, consumes a repair kit) credits
@@ -116,7 +119,8 @@ public class KLS_GiveExpCraftPatch
             // RecipeUsedCount stays 1), so 0.10.0 counted a whole closed-window
             // batch of forged iron as a single completion. Recover the run
             // count from the stack size instead.
-            KLS_Award.AwardSkill(__instance, "craftingWorkstations", KLS_Award.RecipeRuns(data),
+            float weight = KLS_Award.StationWeight(__instance, KLS_Award.FindRecipe(data.RecipeName));
+            KLS_Award.AwardSkill(__instance, "craftingWorkstations", KLS_Award.RecipeRuns(data) * weight,
                 KLS_Award.StationPaceVar, KLS_Award.StationDefaultPace);
         }
         catch (Exception ex)
@@ -154,7 +158,8 @@ public class KLS_RecipeStackCraftPatch
             // campfire or forge while it worked never levelled Workstations.
             if (__instance.windowGroup?.Controller is XUiC_WorkstationWindowGroup)
             {
-                KLS_Award.AwardSkill(player, "craftingWorkstations", 1,
+                Recipe baseRecipe = KLS_Award.FindRecipe(recipe.GetName(), recipe.craftingArea ?? "") ?? recipe;
+                KLS_Award.AwardSkill(player, "craftingWorkstations", KLS_Award.StationWeight(player, baseRecipe),
                     KLS_Award.StationPaceVar, KLS_Award.StationDefaultPace);
             }
         }
@@ -317,6 +322,8 @@ public static class KLS_Award
     public const string LootPaceVar = "$kls_pace_loot";
     public const string HarvestPaceVar = "$kls_pace_harvest";
     public const string RepairPaceVar = "$kls_pace_repair";
+    public const string StationTimeVar = "$kls_pace_stationtime";
+    public const string StationCapVar = "$kls_pace_stationcap";
 
     public static float CraftDefaultPace => KLS_Settings.Craft;
     public static float StationDefaultPace => KLS_Settings.Station;
@@ -339,6 +346,61 @@ public static class KLS_Award
         { "farmPlotBlockVariantHelper", "craftingSeeds" },
         { "meleeWpnBatonT0PipeBaton",   "craftingRobotics" },
     };
+
+    // How many completions one run of `recipe` counts as toward
+    // craftingWorkstations. Before 0.12.0 every run counted as 1, so a base's
+    // worth of cobblestone (0.4 s each) maxed the skill in an evening while a
+    // pistol (53 s) counted the same as one cobblestone.
+    //
+    // The weight is the recipe's BASE craft time (Recipe.craftingTime: the
+    // craft_time attribute, or vanilla's sum of the ingredients'
+    // CraftingIngredientTime) divided by $kls_pace_stationtime, capped at
+    // $kls_pace_stationcap. With the defaults (15 s, cap 4): cobblestone
+    // 0.03, forged iron 0.5, boiled water 0.7, grilled meat 1, a pistol 3.5,
+    // anything of a minute or more 4. The base time is used, not the time the
+    // craft actually took, so perks and tools that speed up crafting don't
+    // slow down learning. Instant recipes teach nothing.
+    public static float StationWeight(EntityPlayerLocal player, Recipe recipe)
+    {
+        if (recipe == null) return 1f;
+
+        float unit = GetPace(player, StationTimeVar, KLS_Settings.StationTime);
+        float cap = GetPace(player, StationCapVar, KLS_Settings.StationCap);
+        if (unit <= 0f || cap <= 0f) return 1f;
+
+        float weight = recipe.craftingTime / unit;
+        if (float.IsNaN(weight) || weight <= 0f) return 0f;
+        return (weight > cap) ? cap : weight;
+    }
+
+    // The recipe as recipes.xml defines it. Neither queue path hands us that:
+    // the UI queues a COPY whose craftingTime is already scaled by perks and
+    // the sandbox crafting-time option (ItemActionEntryCraft), and a
+    // CraftCompleteData only carries the recipe's name. Several recipes can
+    // share a name (campfire and chem-station antibiotics), so prefer the one
+    // for `craftingArea` when it is known, else take the first like vanilla.
+    public static Recipe FindRecipe(string recipeName, string craftingArea = null)
+    {
+        if (string.IsNullOrEmpty(recipeName)) return null;
+        try
+        {
+            List<Recipe> all = CraftingManager.GetAllRecipes();
+            if (all == null) return null;
+            Recipe first = null;
+            for (int i = 0; i < all.Count; i++)
+            {
+                Recipe candidate = all[i];
+                if (candidate == null || candidate.GetName() != recipeName) continue;
+                if (craftingArea == null || string.Equals(candidate.craftingArea ?? "", craftingArea)) return candidate;
+                if (first == null) first = candidate;
+            }
+            return first;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
 
     // How many times the recipe ran for one CraftCompleteData. Merged entries
     // keep RecipeUsedCount at 1 while the stack grows, so divide the stack by
@@ -422,11 +484,14 @@ public static class KLS_Award
     }
 
     // Add `amount` doing-events to `progressionName`'s counter; every `pace`
-    // events = +1 level. Only ever touches crafting skills (ProgressionClass
+    // events = +1 level. `amount` can be a fraction (weighted workstation
+    // completions). Only ever touches crafting skills (ProgressionClass
     // Type 6) — attributes, perks and books are never modified.
-    public static void AwardSkill(EntityPlayerLocal player, string progressionName, int amount,
+    public static void AwardSkill(EntityPlayerLocal player, string progressionName, float amount,
         string paceVar, float defaultPace)
     {
+        if (float.IsNaN(amount) || amount <= 0f) return;
+
         Progression progression = player.Progression;
         if (progression == null) return;
 
@@ -441,7 +506,7 @@ public static class KLS_Award
 
         string counter = CounterPrefix + progressionName;
         float count = player.Buffs.HasCustomVar(counter) ? player.Buffs.GetCustomVar(counter) : 0f;
-        count += (amount <= 0) ? 1 : amount;
+        count += amount;
 
         int gained = 0;
         while (count >= pace && value.Level < cls.MaxLevel)
