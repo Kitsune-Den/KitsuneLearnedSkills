@@ -20,7 +20,7 @@ Pick the pace in `Settings.xml` in the mod folder:
 | `tool` block hits / repairs with that tool | 80 | 60 | 20 |
 | `use` food / medical items consumed | 8 | 6 | 2 |
 | `craft` items crafted (per skill) | 8 | 6 | 2 |
-| `station` workstation queue completions | 16 | 8 | 4 |
+| `station` workstation queue completions (weighed, see below) | 16 | 8 | 4 |
 | `vehicle` vehicle repairs | 4 | 2 | 1 |
 | `wire` wire connections | 4 | 2 | 1 |
 | `loot` fresh loot containers opened | 30 | 20 | 8 |
@@ -31,6 +31,27 @@ Pick the pace in `Settings.xml` in the mod folder:
 Each number is actions per +1 level (higher = slower). Any source can be
 overridden on top of a preset, e.g. `<KitsuneLearnedSkills preset="MEDIUM"
 weapon="24" />`.
+
+A workstation completion is weighed by what was made. The weight is the
+recipe's craft time as the game defines it (before perks and tools speed it
+up) divided by `stationtime`, capped at `stationcap`:
+
+| Setting | Default | Meaning |
+|---|---|---|
+| `stationtime` | 15 | seconds of craft time that count as one completion |
+| `stationcap` | 4 | the most completions a single craft can count as |
+
+| Craft | Craft time | Counts as |
+|---|---|---|
+| Cobblestone | 0.4 s | 0.03 |
+| Forged iron | 7.5 s | 0.5 |
+| Boiled water | 10 s | 0.7 |
+| Grilled meat | 15 s | 1 |
+| Pistol | 53 s | 3.5 |
+| Anything of a minute or more | 60 s+ | 4 |
+
+Both settings are the same in every preset and can be overridden like the
+paces, e.g. `<KitsuneLearnedSkills preset="SLOW" stationtime="30" />`.
 
 - **Multiplayer:** only the server's `Settings.xml` counts. The DLL bakes it
   into the `buffs.xml` the server sends to every client, so players can't
@@ -64,7 +85,7 @@ gives them dedicated "doing" hooks that work from level 1:
 
 | Skill | Levels from | MEDIUM pace | Bootstrap |
 |---|---|---|---|
-| Workstations | any workstation queue completion (campfire, forge, workbench, cement mixer, chem station) | 8 completions per level | cook on a campfire → forge unlocks at 4 |
+| Workstations | any workstation queue completion (campfire, forge, workbench, cement mixer, chem station), weighed by the recipe's craft time | 8 completions per level (one completion = 15 s of craft time) | cook on a campfire → forge unlocks at 4 |
 | Vehicles | repairing a vehicle with a repair kit (wreck salvage counts too, see above) | 2 repairs per level | repair a looted bicycle, or salvage wrecks → parts unlock at 5 |
 | Electrician | completing a wire connection with the wire tool | 2 connections per level | loot/buy a wire tool → own gear unlocks at 25 |
 | Traps | crafting spikes / barbed fence (always unlocked) | 6 crafts per level | dart traps and turrets unlock at 25 |
@@ -124,7 +145,16 @@ stranded at level 1 since 0.6.0: its level-1 item, the pipe baton, carries no
 item that does) unlocks at 11. Crafting a pipe baton now counts as a gateway
 craft, like farm plots for Seeds.
 
-0.11.1: three fixes. The learn-by-using level-ups (kills, tool hits, eating)
+0.12.0: workstation completions are weighed by the recipe's craft time.
+Before this every completion counted as 1, so a base's worth of cobblestone
+(0.4 s each) took Workstations to its cap before the first blood moon, and
+one pistol taught exactly as much as one cobblestone. Each completion now
+counts for its base craft time divided by `stationtime` (15 s), up to
+`stationcap` (4): 1200 cobblestones are worth 2 levels on SLOW, not 75.
+Cooking is about where it was, so the campfire road to the forge is
+unchanged. Progress already earned is kept.
+
+0.12.1: three fixes. The learn-by-using level-ups (kills, tool hits, eating)
 use vanilla's add-a-level action, which on crafting skills quietly gives the
 world's Magazine Progress setting instead of 1, so a world set to 3 gave 3
 levels each time. They now give exactly one. Each DLL source also keeps its
