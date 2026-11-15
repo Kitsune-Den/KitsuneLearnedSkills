@@ -28,16 +28,19 @@ public static class KLS_Settings
     public const string DefaultPreset = "SLOW";
 
     // Order matches the cvars buffKLSPace seeds; keys are the Settings.xml
-    // attribute names.
-    private static readonly string[] Keys = { "weapon", "tool", "use", "craft", "station", "vehicle", "wire", "loot", "wreck", "harvest", "repair" };
+    // attribute names. The last two are not paces but how one workstation
+    // completion is weighed (see KLS_Award.StationWeight), the same in every
+    // preset: stationtime = seconds of recipe craft time that count as one
+    // completion, stationcap = the most completions one craft can count as.
+    private static readonly string[] Keys = { "weapon", "tool", "use", "craft", "station", "vehicle", "wire", "loot", "wreck", "harvest", "repair", "stationtime", "stationcap" };
 
     private static readonly Dictionary<string, float[]> Presets =
         new Dictionary<string, float[]>(StringComparer.OrdinalIgnoreCase)
     {
-        //                       weapon tool use craft station vehicle wire loot wreck harvest repair
-        { "SLOW",   new float[] { 16f, 80f, 8f, 8f, 16f, 4f, 4f, 30f, 80f, 24f, 8f } },
-        { "MEDIUM", new float[] { 12f, 60f, 6f, 6f,  8f, 2f, 2f, 20f, 60f, 16f, 6f } },
-        { "FAST",   new float[] {  4f, 20f, 2f, 2f,  4f, 1f, 1f,  8f, 20f,  6f, 2f } },
+        //                       weapon tool use craft station vehicle wire loot wreck harvest repair stationtime stationcap
+        { "SLOW",   new float[] { 16f, 80f, 8f, 8f, 16f, 4f, 4f, 30f, 80f, 24f, 8f, 15f, 4f } },
+        { "MEDIUM", new float[] { 12f, 60f, 6f, 6f,  8f, 2f, 2f, 20f, 60f, 16f, 6f, 15f, 4f } },
+        { "FAST",   new float[] {  4f, 20f, 2f, 2f,  4f, 1f, 1f,  8f, 20f,  6f, 2f, 15f, 4f } },
     };
 
     public static string ModPath;
@@ -55,6 +58,8 @@ public static class KLS_Settings
     public static float Loot => values[7];
     public static float Harvest => values[9];
     public static float Repair => values[10];
+    public static float StationTime => values[11];
+    public static float StationCap => values[12];
 
     public static void Load()
     {

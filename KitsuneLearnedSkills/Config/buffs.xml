@@ -84,6 +84,12 @@
 				$kls_pace_repair  armor / robotics items repaired (DLL, feeds
 				                  craftingArmor / craftingRobotics)
 
+			Two more are not paces but how much one workstation completion
+			counts (DLL): the recipe's base craft time divided by
+			$kls_pace_stationtime seconds, at most $kls_pace_stationcap. So a
+			quick bulk recipe (cobblestone) counts for a small fraction of a
+			completion and a long one (a gun) for several.
+
 			Since 0.8.0 the DLL REPLACES the effect group below with the
 			numbers from Settings.xml (preset SLOW / MEDIUM / FAST, plus
 			optional per-source overrides) while the host loads buffs.xml,
@@ -124,6 +130,10 @@
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_harvest" operation="set" value="24"/>
 				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_repair"  operation="set" value="8"/>
 				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_repair"  operation="set" value="8"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_stationtime" operation="set" value="15"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_stationtime" operation="set" value="15"/>
+				<triggered_effect trigger="onSelfBuffStart"   action="ModifyCVar" cvar="$kls_pace_stationcap"  operation="set" value="4"/>
+				<triggered_effect trigger="onSelfEnteredGame" action="ModifyCVar" cvar="$kls_pace_stationcap"  operation="set" value="4"/>
 			</effect_group>
 
 		</buff>
