@@ -164,6 +164,18 @@ for V3.x, `Localization.txt` for V2.x). They were hardcoded English before, and
 the crafting one mixed English with the game's translated skill name. A
 dedicated server sends its translations to players along with its configs.
 
+0.13.0 also has three fixes. The learn-by-using level-ups (kills, tool hits, eating)
+use vanilla's add-a-level action, which on crafting skills quietly gives the
+world's Magazine Progress setting instead of 1, so a world set to 3 gave 3
+levels each time. They now give exactly one. Each DLL source also keeps its
+own count now: before, a skill with two sources at different paces (Seeds
+from crafting and harvesting, Workstations, Vehicles, Electrician, Backpacks)
+shared one count, so mixing them levelled faster or slower than either pace
+says. Progress already counted for those skills stays with crafting. And
+DLL level-ups now show the vanilla skill notification and new-recipe
+messages, and reach the server straight away instead of waiting for some
+other progression change.
+
 ## License
 
 [CC BY-NC-SA 4.0](LICENSE), with an extra permission for servers that make money: see [NOTICE.md](NOTICE.md). In short: play it, change it and share it, with credit, not for sale, and with changed versions under the same license.
