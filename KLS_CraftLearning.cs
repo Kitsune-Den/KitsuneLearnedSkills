@@ -87,6 +87,15 @@ using HarmonyLib;
 //      actions without that swap. Magazines and every other mod's
 //      AddProgressionLevel still go through vanilla.
 //
+//  10. Robotics from kills (0.14.0): a kill with a "roboticsSkill" item
+//      (pipe baton, stun baton, junk sledge, junk turret) credits
+//      craftingRobotics at $kls_pace_weapon, like every other weapon line.
+//      Not the XML onSelfKilledOther pattern: a DEPLOYED turret or sledge
+//      fires on the server (MiniTurretFireController.Fire), so on a dedicated
+//      server that event never reaches the owner's client, and the owner is
+//      holding something else anyway. Progression.AddLevelExp does run on the
+//      killer's client for every kill, and carries the item that made it.
+//
 // Each DLL source keeps its own counter per skill ($kls_<source>_<skill>,
 // e.g. $kls_harvest_craftingSeeds), measured against its own pace. Before
 // 0.13.0 they all shared $kls_craft_<skill>, so a skill with two sources at
@@ -327,6 +336,34 @@ public class KLS_ItemRepairPatch
     }
 }
 
+// Kills with a robotics item (see header item 10). Both kill-XP paths end
+// here on the killer's own client: EntityPlayer.AddKillXP directly when the
+// killer is local to the machine that resolved the kill, and
+// NetPackageEntityAddExpClient otherwise. Party-shared kills arrive as
+// "_xpFromParty" with no item, so a party member's kills don't count.
+[HarmonyPatch(typeof(Progression))]
+[HarmonyPatch("AddLevelExp")]
+public class KLS_RoboticsKillPatch
+{
+    private static readonly FastTags<TagGroup.Global> RoboticsTag = FastTags<TagGroup.Global>.Parse("roboticsSkill");
+
+    public static void Postfix(Progression __instance, string _cvarXPName, Progression.XPTypes _xpType, ItemValue _itemValue)
+    {
+        try
+        {
+            if (_xpType != Progression.XPTypes.Kill || _cvarXPName != "_xpFromKill") return;
+            ItemClass itemClass = _itemValue?.ItemClass;
+            if (itemClass == null || !itemClass.HasAnyTags(RoboticsTag)) return;
+            if (!(__instance?.parent is EntityPlayerLocal player)) return;
+            KLS_Award.AwardSkill(player, "craftingRobotics", 1, KLS_Award.WeaponPaceVar, KLS_Award.WeaponDefaultPace);
+        }
+        catch (Exception ex)
+        {
+            Log.Error("[KitsuneLearnedSkills] robotics kill-to-learn failed: " + ex);
+        }
+    }
+}
+
 // buffKLSLearn's level-ups (see header item 9). Vanilla's Execute swaps
 // level="1" for PointsPerMagazine on crafting skills; for our own actions,
 // add the level the XML asks for instead. Anything else runs vanilla.
@@ -399,6 +436,7 @@ public static class KLS_LearnBuff
 
 public static class KLS_Award
 {
+    public const string WeaponPaceVar = "$kls_pace_weapon";
     public const string CraftPaceVar = "$kls_pace_craft";
     public const string StationPaceVar = "$kls_pace_station";
     public const string VehiclePaceVar = "$kls_pace_vehicle";
@@ -409,6 +447,7 @@ public static class KLS_Award
     public const string StationTimeVar = "$kls_pace_stationtime";
     public const string StationCapVar = "$kls_pace_stationcap";
 
+    public static float WeaponDefaultPace => KLS_Settings.Weapon;
     public static float CraftDefaultPace => KLS_Settings.Craft;
     public static float StationDefaultPace => KLS_Settings.Station;
     public static float VehicleDefaultPace => KLS_Settings.Vehicle;
