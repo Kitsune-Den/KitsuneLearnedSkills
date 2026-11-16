@@ -91,7 +91,7 @@ gives them dedicated "doing" hooks that work from level 1:
 | Traps | crafting spikes / barbed fence (always unlocked) | 6 crafts per level | dart traps and turrets unlock at 25 |
 | Seeds | crafting farm plots (always unlocked), and harvesting crops (farm or wild) | 6 crafts or 16 crops per level | seed recipes unlock from 2 |
 | Armor | repairing armor (on top of crafting it) | 6 repairs per level | primitive armor is craftable from 1 |
-| Robotics | crafting pipe batons (always unlocked), and repairing a baton, junk sledge, junk turret or junk drone | 6 crafts or repairs per level | junk sledge unlocks at 11 |
+| Robotics | kills with a baton, junk sledge or junk turret (held or deployed); crafting pipe batons (always unlocked); repairing a baton, junk sledge, junk turret or junk drone | 12 kills, or 6 crafts or repairs per level | junk sledge unlocks at 11 |
 | Backpacks | opening a fresh loot container (first open only; your own storage never counts) | 20 containers per level | small backpack unlocks at 5 |
 
 Armor, Backpacks and Robotics keep their magazines (Pack Rat for backpacks)
@@ -179,3 +179,9 @@ other progression change.
 ## License
 
 [CC BY-NC-SA 4.0](LICENSE), with an extra permission for servers that make money: see [NOTICE.md](NOTICE.md). In short: play it, change it and share it, with credit, not for sale, and with changed versions under the same license.
+
+0.14.0: Robotics levels from kills. Batons, the junk sledge and the junk
+turret were the only weapons whose kills taught nothing: the skill only grew
+from crafting pipe batons and repairing robotics items. A kill with any of
+them now counts at the `weapon` pace, including kills by a turret or sledge
+you have deployed. Reported by Psi Chaotic.

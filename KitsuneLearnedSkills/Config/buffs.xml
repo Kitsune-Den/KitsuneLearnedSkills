@@ -175,7 +175,8 @@
 			                                     is here, after salvagingSkill)
 			  craftingElectrician                wire-tool connections
 			  craftingTraps                      spikes/barbed-fence gateway crafts
-			  craftingRobotics                   also pipe-baton gateway crafts
+			  craftingRobotics                   also pipe-baton gateway crafts, and
+			                                     kills with batons / junk turrets
 			  craftingSeeds                      farm-plot gateway crafts and
 			                                     harvesting crops
 			  craftingBackpack                   opening fresh loot containers
