@@ -680,7 +680,7 @@ public static class KLS_Award
         target.bPlayerStatsChanged |= !target.isEntityRemote;
     }
 
-    private static float GetPace(EntityPlayerLocal player, string paceVar, float defaultPace)
+    public static float GetPace(EntityPlayerLocal player, string paceVar, float defaultPace)
     {
         if (player.Buffs != null && player.Buffs.HasCustomVar(paceVar))
         {
@@ -688,5 +688,136 @@ public static class KLS_Award
             if (pace > 0f) return pace;
         }
         return defaultPace;
+    }
+}
+
+// "kls" console command (0.15.0): how far each crafting skill is toward its
+// next level, per source. Every counter is a cvar on the player, so this only
+// reads. It runs on the player's own client (IsExecuteOnClient), and the
+// default permission level lets every player on a server use it.
+public class KLS_ConsoleCmdProgress : ConsoleCmdAbstract
+{
+    // buffs.xml counters: skill, counter cvar, Settings.xml pace key.
+    private static readonly string[][] XmlSources =
+    {
+        new[] { "craftingClubs", "$kls_clubs", "weapon" },
+        new[] { "craftingBlades", "$kls_blades", "weapon" },
+        new[] { "craftingSpears", "$kls_spears", "weapon" },
+        new[] { "craftingSledgehammers", "$kls_sledges", "weapon" },
+        new[] { "craftingKnuckles", "$kls_knuckles", "weapon" },
+        new[] { "craftingBows", "$kls_bows", "weapon" },
+        new[] { "craftingHandguns", "$kls_handguns", "weapon" },
+        new[] { "craftingShotguns", "$kls_shotguns", "weapon" },
+        new[] { "craftingRifles", "$kls_rifles", "weapon" },
+        new[] { "craftingMachineGuns", "$kls_machineguns", "weapon" },
+        new[] { "craftingExplosives", "$kls_explosives", "weapon" },
+        new[] { "craftingHarvestingTools", "$kls_harvest", "tool" },
+        new[] { "craftingSalvageTools", "$kls_salvage", "tool" },
+        new[] { "craftingRepairTools", "$kls_repair", "tool" },
+        new[] { "craftingFood", "$kls_food", "use" },
+        new[] { "craftingMedical", "$kls_medical", "use" },
+        new[] { "craftingVehicles", "$kls_wreck", "wreck" },
+    };
+
+    // DLL counters are $kls_<key>_<skill> (KLS_Award.CounterVar).
+    private static readonly string[] DllSources = { "craft", "station", "vehicle", "wire", "loot", "harvest", "repair", "weapon" };
+
+    private static readonly Dictionary<string, string> Labels = new Dictionary<string, string>
+    {
+        { "weapon", "kills" }, { "tool", "tool hits" }, { "use", "uses" }, { "wreck", "wreck hits" },
+        { "craft", "crafts" }, { "station", "station work" }, { "vehicle", "vehicle repairs" },
+        { "wire", "wire connections" }, { "loot", "containers" }, { "harvest", "crops" }, { "repair", "repairs" },
+    };
+
+    public override bool IsExecuteOnClient => true;
+    public override int DefaultPermissionLevel => 1000;
+
+    public override string[] getCommands()
+    {
+        return new[] { "kls", "learnedskills" };
+    }
+
+    public override string getDescription()
+    {
+        return "KitsuneLearnedSkills: shows progress toward the next level of each crafting skill";
+    }
+
+    public override string getHelp()
+    {
+        return "Usage:\n  kls          all crafting skills\n  kls <text>   only skills whose name contains <text>, e.g. kls work\n"
+            + "Each source shows what you have counted so far, how many it takes per level, and the percentage.";
+    }
+
+    public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
+    {
+        SdtdConsole console = SingletonMonoBehaviour<SdtdConsole>.Instance;
+        try
+        {
+            EntityPlayerLocal player = GameManager.Instance?.World?.GetPrimaryPlayer();
+            if (player?.Progression == null || player.Buffs == null)
+            {
+                console.Output("[KitsuneLearnedSkills] No local player. Run this in game, from your own console.");
+                return;
+            }
+
+            string filter = (_params != null && _params.Count > 0) ? string.Join(" ", _params).Trim() : "";
+            List<string> lines = new List<string>();
+            foreach (ProgressionValue value in player.Progression.GetDict().Values)
+            {
+                ProgressionClass cls = value?.ProgressionClass;
+                if (cls == null || !cls.IsCrafting) continue;
+
+                string name = Localization.Get(cls.NameKey, false, null);
+                if (string.IsNullOrEmpty(name)) name = cls.Name;
+                if (filter.Length != 0
+                    && name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0
+                    && cls.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0) continue;
+
+                string line = name + " " + value.Level + "/" + cls.MaxLevel + ": ";
+                if (value.Level >= cls.MaxLevel)
+                {
+                    lines.Add(line + "maxed");
+                    continue;
+                }
+
+                List<string> parts = new List<string>();
+                for (int i = 0; i < XmlSources.Length; i++)
+                {
+                    if (XmlSources[i][0] == cls.Name) AddPart(parts, player, XmlSources[i][1], XmlSources[i][2], true);
+                }
+                for (int i = 0; i < DllSources.Length; i++)
+                {
+                    AddPart(parts, player, "$kls_" + DllSources[i] + "_" + cls.Name, DllSources[i], false);
+                }
+                lines.Add(line + (parts.Count != 0 ? string.Join(", ", parts) : "nothing counted yet"));
+            }
+
+            lines.Sort(StringComparer.OrdinalIgnoreCase);
+            console.Output("[KitsuneLearnedSkills] Progress toward the next level (counted / needed):");
+            for (int i = 0; i < lines.Count; i++) console.Output("  " + lines[i]);
+            if (lines.Count == 0) console.Output("  no crafting skill matches \"" + filter + "\"");
+        }
+        catch (Exception ex)
+        {
+            console.Output("[KitsuneLearnedSkills] kls failed: " + ex.Message);
+            Log.Error("[KitsuneLearnedSkills] kls command failed: " + ex);
+        }
+    }
+
+    // One "label counted/needed (percent)" entry. A source the skill always
+    // has (XML) is listed even at zero; a DLL source only once it has counted.
+    private static void AddPart(List<string> parts, EntityPlayerLocal player, string counter, string key, bool always)
+    {
+        bool has = player.Buffs.HasCustomVar(counter);
+        if (!has && !always) return;
+
+        float count = has ? player.Buffs.GetCustomVar(counter) : 0f;
+        float pace = KLS_Award.GetPace(player, "$kls_pace_" + key, KLS_Settings.ByKey(key));
+        if (pace < 1f) pace = 1f;
+        if (count < 0f) count = 0f;
+
+        int percent = (int)Math.Floor(Math.Min(count / pace, 1f) * 100f);
+        parts.Add(Labels[key] + " " + count.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)
+            + "/" + pace.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + " (" + percent + "%)");
     }
 }

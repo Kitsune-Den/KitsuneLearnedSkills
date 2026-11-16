@@ -11,10 +11,10 @@ Built for 7DTD V2.6+. Requires EAC off (ships a DLL).
 Pick the pace in `Settings.xml` in the mod folder:
 
 ```xml
-<KitsuneLearnedSkills preset="SLOW" />
+<KitsuneLearnedSkills preset="MEDIUM" />
 ```
 
-| Source | SLOW (default) | MEDIUM | FAST |
+| Source | SLOW | MEDIUM (default) | FAST |
 |---|---|---|---|
 | `weapon` kills with that weapon type | 16 | 12 | 4 |
 | `tool` block hits / repairs with that tool | 80 | 60 | 20 |
@@ -58,6 +58,19 @@ paces, e.g. `<KitsuneLearnedSkills preset="SLOW" stationtime="30" />`.
   change their own pace. Restart the server after editing.
 - **Single player:** takes effect the next time you load a world.
 - Existing characters pick up the new pace on their next login.
+
+## Seeing your progress
+
+Open the console (F1) and type `kls`. It lists every crafting skill with its
+level and how far each source is toward the next one:
+
+```
+Workstations 12/75: station work 5.9/8 (73%)
+Clubs 4/75: kills 7/12 (58%), crafts 2/6 (33%)
+```
+
+`kls work` shows only the skills with "work" in the name. It works in single
+player and on servers, for every player, and only reads your own character.
 
 ## How skills level
 
@@ -176,12 +189,20 @@ DLL level-ups now show the vanilla skill notification and new-recipe
 messages, and reach the server straight away instead of waiting for some
 other progression change.
 
-## License
-
-[CC BY-NC-SA 4.0](LICENSE), with an extra permission for servers that make money: see [NOTICE.md](NOTICE.md). In short: play it, change it and share it, with credit, not for sale, and with changed versions under the same license.
-
 0.14.0: Robotics levels from kills. Batons, the junk sledge and the junk
 turret were the only weapons whose kills taught nothing: the skill only grew
 from crafting pipe batons and repairing robotics items. A kill with any of
 them now counts at the `weapon` pace, including kills by a turret or sledge
 you have deployed. Reported by Psi Chaotic.
+
+0.15.0: a `kls` console command shows progress toward the next level of
+every crafting skill, per source. Before this the only feedback was the
+message when a level landed, so slow sources (Workstations above all) looked
+stuck. Suggested by Mitch1985. MEDIUM is now the default preset instead of
+SLOW: the `Settings.xml` that ships with the mod says MEDIUM, and so does the
+fallback when the file is missing. If you install over an older version and
+want to stay on SLOW, keep your own `Settings.xml` or set `preset="SLOW"`.
+
+## License
+
+[CC BY-NC-SA 4.0](LICENSE), with an extra permission for servers that make money: see [NOTICE.md](NOTICE.md). In short: play it, change it and share it, with credit, not for sale, and with changed versions under the same license.
