@@ -45,6 +45,6 @@
 
 	Existing characters pick up the new pace on their next login; progress
 	already earned toward the next level is kept. If this file is missing or
-	unreadable, the mod falls back to SLOW.
+	unreadable, the mod falls back to MEDIUM.
 -->
-<KitsuneLearnedSkills preset="SLOW" />
+<KitsuneLearnedSkills preset="MEDIUM" />

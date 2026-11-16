@@ -25,7 +25,7 @@ using HarmonyLib;
 public static class KLS_Settings
 {
     public const string FileName = "Settings.xml";
-    public const string DefaultPreset = "SLOW";
+    public const string DefaultPreset = "MEDIUM";
 
     // Order matches the cvars buffKLSPace seeds; keys are the Settings.xml
     // attribute names. The last two are not paces but how one workstation
@@ -60,6 +60,13 @@ public static class KLS_Settings
     public static float Repair => values[10];
     public static float StationTime => values[11];
     public static float StationCap => values[12];
+
+    // The pace for a Settings.xml key ("weapon", "tool", ...), or 0 if unknown.
+    public static float ByKey(string key)
+    {
+        int i = Array.IndexOf(Keys, key);
+        return (i >= 0) ? values[i] : 0f;
+    }
 
     public static void Load()
     {
