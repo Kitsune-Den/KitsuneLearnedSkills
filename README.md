@@ -82,7 +82,7 @@ Two mechanisms, both always active:
 |---|---|---|
 | Weapon crafting (clubs, blades, spears, sledges, knuckles, bows, handguns, shotguns, rifles, machine guns, explosives) | kills while holding that weapon type | 12 kills per level |
 | Tool crafting (harvesting, salvage, repair) | block hits with harvesting and salvage tools; repairs and finished block upgrades with a stone axe, claw hammer or nailgun | 60 per level |
-| Salvage Tools, before the wrench | hits on a car, truck or bus wreck with a harvesting tool (stone axe, pickaxe, shovel), until level 4 where the wrench recipe unlocks | 60 hits per level |
+| Salvage Tools, before the wrench | hits on a vehicle wreck, an appliance (fridge, stove, microwave, dishwasher, washer), electronics (TV, computer, lights) or machinery (water heater, valves) with a harvesting tool (stone axe, pickaxe, shovel), until level 4 where the wrench recipe unlocks | 60 hits per level |
 | Food + medical crafting | consuming food / medical items | 6 uses per level |
 | Vehicles | salvaging a car, truck or bus wreck with a wrench, ratchet or impact driver | 60 hits per level |
 
@@ -211,6 +211,13 @@ at level 1. Below level 4, hitting a vehicle wreck with a harvesting tool
 (the starting stone axe included) now counts as a salvage hit, at the `tool`
 pace. From level 4 on it is salvage tools only, as before. Asked by
 Tekitou1000.
+
+0.17.0: the wrench-free start also counts appliances, electronics and
+machinery, not only vehicle wrecks: fridges, stoves, microwaves, dishwashers,
+washers, TVs, computers, lights, water heaters and the like. These are the
+blocks vanilla tags `challenge_elec_parts` or `challenge_mech_parts` (the
+electrical and mechanical parts challenges). The hit that breaks the block
+counts too. Still only below Salvage Tools level 4.
 
 ## License
 
