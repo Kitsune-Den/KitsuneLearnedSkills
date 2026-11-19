@@ -454,6 +454,48 @@
 			</effect_group>
 
 			<!--
+				harvestingSkill on a vehicle wreck -> craftingSalvageTools,
+				below level 4 only (0.16.0)
+				The wrench recipe unlocks at Salvage Tools 4, and before this
+				the only way up was hits with a wrench, ratchet or impact
+				driver: a player who never looted or bought a wrench was stuck
+				at level 1. Until the wrench unlocks, beating on a wreck with
+				a harvesting tool (the starting stone axe included) counts as a
+				salvage hit. Same counter and pace as the group above, so axe
+				and found-wrench hits add up. The same hit still feeds
+				Harvesting Tools.
+
+				Count and grant are gated on level LT 4. Notify and reset use
+				LTE 4 because the grant has already run by then: the hit that
+				lands level 4 must still show its message and reset the counter.
+			-->
+			<effect_group>
+				<triggered_effect trigger="onSelfDamagedBlock" action="ModifyCVar" cvar="$kls_salvage" operation="add" value="1">
+					<requirement name="HoldingItemHasTags" tags="harvestingSkill"/>
+					<requirement name="TriggerHasTags" tags="challenge_cars"/>
+					<requirement name="ProgressionLevel" progression_name="craftingSalvageTools" operation="LT" value="4"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfDamagedBlock" action="AddProgressionLevel" progression_name="craftingSalvageTools" level="1">
+					<requirement name="HoldingItemHasTags" tags="harvestingSkill"/>
+					<requirement name="TriggerHasTags" tags="challenge_cars"/>
+					<requirement name="ProgressionLevel" progression_name="craftingSalvageTools" operation="LT" value="4"/>
+					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfDamagedBlock" action="ShowToolbeltMessage" message_key="klsMsgSalvageTools" message="Your salvage crafting knowledge grows.">
+					<requirement name="HoldingItemHasTags" tags="harvestingSkill"/>
+					<requirement name="TriggerHasTags" tags="challenge_cars"/>
+					<requirement name="ProgressionLevel" progression_name="craftingSalvageTools" operation="LTE" value="4"/>
+					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
+				</triggered_effect>
+				<triggered_effect trigger="onSelfDamagedBlock" action="ModifyCVar" cvar="$kls_salvage" operation="set" value="0">
+					<requirement name="HoldingItemHasTags" tags="harvestingSkill"/>
+					<requirement name="TriggerHasTags" tags="challenge_cars"/>
+					<requirement name="ProgressionLevel" progression_name="craftingSalvageTools" operation="LTE" value="4"/>
+					<requirement name="CVarCompare" cvar="$kls_salvage" operation="GTE" value="@$kls_pace_tool"/>
+				</triggered_effect>
+			</effect_group>
+
+			<!--
 				salvagingSkill on a vehicle wreck -> craftingVehicles
 				Vanilla tags every car, truck, bus and forklift wreck with
 				challenge_cars (the "harvest engines from cars" challenges use

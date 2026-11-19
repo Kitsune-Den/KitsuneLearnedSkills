@@ -82,6 +82,7 @@ Two mechanisms, both always active:
 |---|---|---|
 | Weapon crafting (clubs, blades, spears, sledges, knuckles, bows, handguns, shotguns, rifles, machine guns, explosives) | kills while holding that weapon type | 12 kills per level |
 | Tool crafting (harvesting, salvage, repair) | block hits with harvesting and salvage tools; repairs and finished block upgrades with a stone axe, claw hammer or nailgun | 60 per level |
+| Salvage Tools, before the wrench | hits on a car, truck or bus wreck with a harvesting tool (stone axe, pickaxe, shovel), until level 4 where the wrench recipe unlocks | 60 hits per level |
 | Food + medical crafting | consuming food / medical items | 6 uses per level |
 | Vehicles | salvaging a car, truck or bus wreck with a wrench, ratchet or impact driver | 60 hits per level |
 
@@ -202,6 +203,14 @@ stuck. Suggested by Mitch1985. MEDIUM is now the default preset instead of
 SLOW: the `Settings.xml` that ships with the mod says MEDIUM, and so does the
 fallback when the file is missing. If you install over an older version and
 want to stay on SLOW, keep your own `Settings.xml` or set `preset="SLOW"`.
+
+0.16.0: Salvage Tools can start without a wrench. The skill only levelled
+from hits with a wrench, ratchet or impact driver, and the wrench recipe
+unlocks at level 4, so a player who never looted or bought a wrench was stuck
+at level 1. Below level 4, hitting a vehicle wreck with a harvesting tool
+(the starting stone axe included) now counts as a salvage hit, at the `tool`
+pace. From level 4 on it is salvage tools only, as before. Asked by
+Tekitou1000.
 
 ## License
 
