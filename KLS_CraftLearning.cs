@@ -711,7 +711,7 @@ public class KLS_ConsoleCmdProgress : ConsoleCmdAbstract
         new[] { "craftingRifles", "$kls_rifles", "weapon" },
         new[] { "craftingMachineGuns", "$kls_machineguns", "weapon" },
         new[] { "craftingExplosives", "$kls_explosives", "weapon" },
-        new[] { "craftingHarvestingTools", "$kls_harvest", "tool" },
+        new[] { "craftingHarvestingTools", "$kls_harvest", "gather" },
         new[] { "craftingSalvageTools", "$kls_salvage", "tool" },
         new[] { "craftingRepairTools", "$kls_repair", "tool" },
         new[] { "craftingFood", "$kls_food", "use" },
@@ -724,7 +724,7 @@ public class KLS_ConsoleCmdProgress : ConsoleCmdAbstract
 
     private static readonly Dictionary<string, string> Labels = new Dictionary<string, string>
     {
-        { "weapon", "kills" }, { "tool", "tool hits" }, { "use", "uses" }, { "wreck", "wreck hits" },
+        { "weapon", "kills" }, { "tool", "tool hits" }, { "gather", "tool hits" },{ "use", "uses" }, { "wreck", "wreck hits" },
         { "craft", "crafts" }, { "station", "station work" }, { "vehicle", "vehicle repairs" },
         { "wire", "wire connections" }, { "loot", "containers" }, { "harvest", "crops" }, { "repair", "repairs" },
     };

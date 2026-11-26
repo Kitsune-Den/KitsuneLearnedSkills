@@ -17,7 +17,8 @@ Pick the pace in `Settings.xml` in the mod folder:
 | Source | SLOW | MEDIUM (default) | FAST |
 |---|---|---|---|
 | `weapon` kills with that weapon type | 16 | 12 | 4 |
-| `tool` block hits / repairs with that tool | 80 | 60 | 20 |
+| `tool` block hits / repairs with salvage and repair tools | 80 | 60 | 20 |
+| `gather` block hits with harvesting tools | 600 | 400 | 150 |
 | `use` food / medical items consumed | 8 | 6 | 2 |
 | `craft` items crafted (per skill) | 8 | 6 | 2 |
 | `station` workstation queue completions (weighed, see below) | 16 | 8 | 4 |
@@ -81,7 +82,8 @@ Two mechanisms, both always active:
 | Skill group | Levels from | MEDIUM pace |
 |---|---|---|
 | Weapon crafting (clubs, blades, spears, sledges, knuckles, bows, handguns, shotguns, rifles, machine guns, explosives) | kills while holding that weapon type | 12 kills per level |
-| Tool crafting (harvesting, salvage, repair) | block hits with harvesting and salvage tools; repairs and finished block upgrades with a stone axe, claw hammer or nailgun | 60 per level |
+| Harvesting Tools | block hits with an axe, pickaxe, shovel, chainsaw or auger | 400 hits per level |
+| Salvage Tools, Repair Tools | block hits with salvage tools; repairs and finished block upgrades with a stone axe, claw hammer or nailgun | 60 per level |
 | Salvage Tools, before the wrench | hits on a vehicle wreck, an appliance (fridge, stove, microwave, dishwasher, washer), electronics (TV, computer, lights) or machinery (water heater, valves) with a harvesting tool (stone axe, pickaxe, shovel), until level 4 where the wrench recipe unlocks | 60 hits per level |
 | Food + medical crafting | consuming food / medical items | 6 uses per level |
 | Vehicles | salvaging a car, truck or bus wreck with a wrench, ratchet or impact driver | 60 hits per level |
@@ -218,6 +220,15 @@ washers, TVs, computers, lights, water heaters and the like. These are the
 blocks vanilla tags `challenge_elec_parts` or `challenge_mech_parts` (the
 electrical and mechanical parts challenges). The hit that breaks the block
 counts too. Still only below Salvage Tools level 4.
+
+0.18.0: Harvesting Tools has its own pace, `gather`, at 600 / 400 / 150 hits
+per level instead of the `tool` pace of 80 / 60 / 20. Every swing of an axe or
+pickaxe counts, a stone axe swings 105 times a minute, and steel tools unlock
+at level 26, so on MEDIUM steel tools came after 1,500 swings: about 15
+minutes of chopping. They now take about 10,000. `tool` still sets Salvage
+Tools and Repair Tools. A `tool="..."` override in your own `Settings.xml` no
+longer slows Harvesting Tools: use `gather="..."` for that. Levels already
+earned are kept.
 
 ## License
 
