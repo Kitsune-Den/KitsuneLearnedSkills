@@ -6,7 +6,8 @@
 
 	                         SLOW   MEDIUM   FAST
 	  weapon   kills            16      12      4   (kills holding that weapon type)
-	  tool     hits             80      60     20   (block hits / repairs with that tool)
+	  tool     hits             80      60     20   (block hits / repairs with salvage and repair tools)
+	  gather   hits            600     400    150   (block hits with harvesting tools: axes, pickaxes, shovels)
 	  use      uses              8       6      2   (food and medical items consumed)
 	  craft    items             8       6      2   (items crafted, per skill)
 	  station  completions      16       8      4   (any workstation queue, campfire included; weighed, see below)

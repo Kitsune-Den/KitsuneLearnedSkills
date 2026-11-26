@@ -32,15 +32,21 @@ public static class KLS_Settings
     // completion is weighed (see KLS_Award.StationWeight), the same in every
     // preset: stationtime = seconds of recipe craft time that count as one
     // completion, stationcap = the most completions one craft can count as.
-    private static readonly string[] Keys = { "weapon", "tool", "use", "craft", "station", "vehicle", "wire", "loot", "wreck", "harvest", "repair", "stationtime", "stationcap" };
+    //
+    // "gather" (0.18.0) is harvesting-tool block hits, split off from "tool".
+    // It is appended so the indexes below stay put. A stone axe swings 105
+    // times a minute and steel tools unlock at Harvesting Tools 26, so at the
+    // tool pace (60) steel arrived after 15 minutes of chopping. At 400 it
+    // takes about 10,000 swings.
+    private static readonly string[] Keys = { "weapon", "tool", "use", "craft", "station", "vehicle", "wire", "loot", "wreck", "harvest", "repair", "stationtime", "stationcap", "gather" };
 
     private static readonly Dictionary<string, float[]> Presets =
         new Dictionary<string, float[]>(StringComparer.OrdinalIgnoreCase)
     {
-        //                       weapon tool use craft station vehicle wire loot wreck harvest repair stationtime stationcap
-        { "SLOW",   new float[] { 16f, 80f, 8f, 8f, 16f, 4f, 4f, 30f, 80f, 24f, 8f, 15f, 4f } },
-        { "MEDIUM", new float[] { 12f, 60f, 6f, 6f,  8f, 2f, 2f, 20f, 60f, 16f, 6f, 15f, 4f } },
-        { "FAST",   new float[] {  4f, 20f, 2f, 2f,  4f, 1f, 1f,  8f, 20f,  6f, 2f, 15f, 4f } },
+        //                       weapon tool use craft station vehicle wire loot wreck harvest repair stationtime stationcap gather
+        { "SLOW",   new float[] { 16f, 80f, 8f, 8f, 16f, 4f, 4f, 30f, 80f, 24f, 8f, 15f, 4f, 600f } },
+        { "MEDIUM", new float[] { 12f, 60f, 6f, 6f,  8f, 2f, 2f, 20f, 60f, 16f, 6f, 15f, 4f, 400f } },
+        { "FAST",   new float[] {  4f, 20f, 2f, 2f,  4f, 1f, 1f,  8f, 20f,  6f, 2f, 15f, 4f, 150f } },
     };
 
     public static string ModPath;
